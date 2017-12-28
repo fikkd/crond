@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 权限缓存 -->
+	<bean id="authCache" class="com.wisoft.framework.common.cache.AuthCache"
+		abstract="false" lazy-init="default" autowire="default"
+		dependency-check="default">
+	</bean>
+
+	<!-- spingBean工具类，用来获取容器中的bean -->
+	<bean id="SpringBeanUtil" class="com.wisoft.framework.common.utils.SpringBeanUtil" />
+	
+</beans>
