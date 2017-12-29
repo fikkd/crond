@@ -9,13 +9,15 @@ $(function() {
 	
 	// 切换到当前页时的事件
 	var fOnSelect = function() {
-		console.log('父页面传递过来的参数' + cronExpression);
-		console.log('父页面传递过来的参数' + cronExpressionZhCN);
+		
+		
+		
+		
 	};
 	// 保存当前页
 	var fSave = function() {
-		cronExpression = '789';
-		cronExpressionZhCN = '001';
+		
+		
 	};
 	
 	/** =============================================== **/

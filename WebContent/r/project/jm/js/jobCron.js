@@ -8,8 +8,7 @@ var G_TabTool = {// tab 页全局变量、方法管理
 var cronExpression;
 var cronExpressionZhCN;
 $(function(){
-    var oHideParams = $.getHideParams(),
-        oUrlParams = $.getUrlParams();
+    var oHideParams = $.getHideParams(), oUrlParams = $.getUrlParams();
     var layerName, fromWin;
     var URLS = {};
     var aTabVal = ['tab0', 'tab1', 'tab2', 'tab3', 'tab4', 'tab5', 'tab6'],// 根据此顺序触发每个 tab 页的初始化内容方法

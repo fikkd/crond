@@ -88,8 +88,8 @@ $(function() {
 		var url = BASEPATH + "jm/toCron.do";
 		cronLayer.show({
             data:{
-            	cron_expression : '0 */3 * * * ?',
-            	cron_zh_cn : '中文表达式'
+            	cron_expression : cron_expression,
+            	cron_zh_cn : cron_zh_cn
             }
         });
 		
@@ -102,8 +102,8 @@ $(function() {
 		}
 		cronLayerS.show({
 			data:{
-            	cron_expression : '0 */3 * * * ?',
-            	cron_zh_cn : '中文表达式'
+            	cron_expression : cron_expression,
+            	cron_zh_cn : cron_zh_cn
             }
         });
 	}
