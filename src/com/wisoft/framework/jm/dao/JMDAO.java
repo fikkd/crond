@@ -31,7 +31,7 @@ public class JMDAO extends NBaseDao {
 			jobs = this.findByHql("select id from JmJobDetail where job_name=? and job_group=? and id<>?", new Object[] { job_name, job_group, id });
 		}
 		
-		return (null != jobs && jobs.size() > 0) ? true : false;		
+		return null != jobs && jobs.size() > 0;		
 	}
 	
 	/**
@@ -47,10 +47,8 @@ public class JMDAO extends NBaseDao {
 	@SuppressWarnings("unchecked")
 	public JmJobDetail findJobByNameAndGroup(String job_name, String job_group) {
 		List<JmJobDetail> jobs = this.findByHql("from JmJobDetail where job_name=? and job_group=?", new Object[] { job_name, job_group });
-		if (null != jobs && jobs.size() > 0) {
-			return jobs.get(0);
-		}		
-		return null;
+		return null != jobs && jobs.size() > 0
+				? jobs.get(0) : null;
 	}
 
 	/**
@@ -111,19 +109,16 @@ public class JMDAO extends NBaseDao {
 	/**
 	 * 根据任务名称及任务分组查询任务数
 	 * 
-	 * @param job_name
-	 *            任务名称
-	 * @param job_group
-	 *            任务分组
-	 * @param id
-	 *            任务ID
+	 * @param job_name 任务名称
+	 * @param job_group 任务分组
+	 * @param id 任务ID
 	 * @return
 	 *
 	 * @变更记录 2017年12月28日 下午1:27:11 李瑞辉 创建
 	 *
 	 */
 	public int findNameAndGroupCount(String job_name, String job_group, String id) {
-		// 若任务ID不为空，则需排除该任务本身
+		// 若任务ID不为空则需排除该任务本身
 		if (null != id && !"".equals(id.trim())) {
 			return this.findCountsByHql("select count(*) from JmJobDetail where job_name=? and job_group=? and id<>?",
 					new Object[] { job_name, job_group, id });
@@ -147,10 +142,9 @@ public class JMDAO extends NBaseDao {
 	public JmQrtzTriggers findQrtzTriggers(String job_name, String job_group) {
 		List<JmQrtzTriggers> list = this.findByNamedQuery("findQrtz_triggers", JmQrtzTriggers.class,
 				new String[] { "job_name", "job_group" }, new Object[] { job_name, job_group });
-		if (null != list && list.size() > 0) {
-			return list.get(0);
-		}
-		return null;
+		
+		return null != list && list.size() > 0
+				? list.get(0) : null;
 	}
 
 }

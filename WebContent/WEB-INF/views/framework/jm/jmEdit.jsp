@@ -69,7 +69,8 @@
 									</tr>
 									<tr data-bean="bean">
 										<th>
-											<label class="radio-lab"><input type="checkbox" id="bean">Bean方式</label>
+											<label class="radio-lab"><input type="radio" name="ctype" value="general">普通方式</label>
+											<!-- <label class="radio-lab"><input type="checkbox" id="bean">普通方式</label> -->
 										</th>
 										<td>
 											<div style="border: solid 1px #ccc;">
@@ -82,13 +83,13 @@
 														<tr>
 															<th>Bean名</th>
 															<td>
-																<input name="job_bean_name"  value="${jobDetail.job_bean_name}" class="txt-mid" placeholder="jaxyJM" />
+																<input name="job_bean_name"  readonly="readonly" value="${jobDetail.job_bean_name}" class="txt-mid" placeholder="jaxyJM" />
 															</td>
 														</tr>
 														<tr>
 															<th>方法名</th>
 															<td>
-																<input name="job_method_name" value="${jobDetail.job_method_name}" class="txt-mid" placeholder="saveJM"/>
+																<input name="job_method_name" readonly="readonly" value="${jobDetail.job_method_name}" class="txt-mid" placeholder="saveJM"/>
 															</td>
 														</tr>
 													</tbody>
@@ -97,9 +98,9 @@
 										</td>
 									</tr>									
 									<tr data-bean="class">
-										<th>执行类方式</th>
+										<th><label class="radio-lab"><input type="radio" name="ctype" value="standard">标准方式</label></th>
 										<td>
-											<input name="job_class_name" value="${jobDetail.job_class_name}" class="txt-mid" placeholder="com.wisoft.framework.jm.JaxyJM"/>
+											<input name="job_class_name" readonly="readonly" value="${jobDetail.job_class_name}" class="txt-mid" placeholder="com.wisoft.framework.jm.JaxyJM"/>
 										</td>
 									</tr>
 							
@@ -117,14 +118,17 @@
 													</colgroup>
 													<tbody>
 														<tr>
-															<th>日期</th>
+															<th>执行时间</th>
 															<td>
-																<input name="starttime" id="starttime" value="${jobDetail.starttime}" class="txt-mid txt-date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d}'})" />
+																<div style="position: relative;width: 100%;">
+																	<input name="exectime" id="exectime" readonly="readonly" value="${jobDetail.exectime}" class="txt-mid txt-date" style="width: 100%;" />
+																	<div class="txt-search" style="width: 30px;height: 20px;position: absolute;right: 30px;top: 5px;"></div>															
+																</div>
 															</td>
 														</tr>
 														<tr data-countdown="countdown">
 															<th>
-																<label class="radio-lab"><input type="checkbox" id="countDown">倒计时执行</label>
+																<label class="radio-lab"><input type="checkbox" id="countDown">倒计时间</label>
 															</th>
 															<td>
 																<div class="txt-mid numbox" style="width: 70px;" id="time_limit"></div> 
@@ -145,15 +149,48 @@
 											<label class="radio-lab"><input type="radio" name="dispatch" value="com">周期性计划任务</label>
 										</th>
 										<td>
-											<div class="input-group">
-												<input name="cron_expression" type="hidden" value="${jobDetail.cron_expression}">
-												<input name="cron_zh_cn" readonly="readonly" value="${jobDetail.cron_zh_cn}" class="input-group-txt txt-mid" />
-												<div id="changeJobCron" class="input-group-btn btn-mid">
-													<span class="fa fa-cog"></span> 精准设置
-												</div>
-												<div id="changeJobCronS" class="input-group-btn btn-mid">
-													<span class="fa fa-cog"></span> 常规设置
-												</div>
+											<div style="border: solid 1px #ccc;">
+												<table class="detailtable" cellpadding="0" cellspacing="0" style="width: 100%;">
+													<colgroup>
+														<col style="width: 100px;" />
+														<col />
+													</colgroup>
+													<tbody>
+														<tr>
+															<th>设置周期</th>
+															<td >
+																<div class="input-group">
+																	<input name="cron_expression" type="hidden" value="${jobDetail.cron_expression}">
+																	<textarea name="cron_zh_cn" readonly="readonly" rows="3" class="txt" placeholder="这是一个检查数据的任务">${jobDetail.cron_zh_cn}</textarea>
+																	<div id="changeJobCron" class="input-group-btn btn-mid">
+																		<span class="fa fa-cog"></span> 精准
+																	</div>
+																	<div id="changeJobCronS" class="input-group-btn btn-mid">
+																		<span class="fa fa-cog"></span> 常规
+																	</div>
+																</div>
+															</td>
+														</tr>
+														<tr>
+															<th>开始时间</th>
+															<td>
+																<div style="position: relative;width: 100%;">
+																	<input name="stime" value="${starttime}" readonly="readonly" class="txt-mid txt-date" style="width: 100%;" />
+																	<div class="txt-search" style="width: 30px;height: 20px;position: absolute;right: 30px;top: 5px;"></div>															
+																</div>
+															</td>
+														</tr>
+														<tr>
+															<th>结束时间</th>
+															<td>
+																<div style="position: relative;width: 100%;">
+																	<input name="etime" value="${endtime}" readonly="readonly" class="txt-mid txt-date" style="width: 100%;" />
+																	<div class="txt-search" style="width: 30px;height: 20px;position: absolute;right: 30px;top: 5px;"></div>															
+																</div>
+															</td>
+														</tr>														
+													</tbody>
+												</table>
 											</div>
 										</td>
 									</tr>
@@ -171,6 +208,7 @@
 				<div class="pageBot_in">
 					<c:if test="${!isView}">
 						<button type="button" class="btn-mid btn-submit" data-val="submit">保存</button>
+						<button type="button" class="btn-mid btn-submit" data-val="submitAndFired">保存并启动</button>
 					</c:if>
 					<button type="button" class="btn-mid btn-cancel" style="margin-left: .2em;" data-val="cancel">关闭</button>
 				</div>

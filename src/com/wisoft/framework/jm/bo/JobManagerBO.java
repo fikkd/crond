@@ -13,13 +13,12 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
-import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
 import com.wisoft.framework.common.exception.WisoftException;
 import com.wisoft.framework.common.pojo.PageInfoDTO;
 import com.wisoft.framework.common.utils.DateUtil;
-import com.wisoft.framework.common.utils.ListUitl;
 import com.wisoft.framework.common.utils.SSUtil;
 import com.wisoft.framework.common.utils.SpringBeanUtil;
 import com.wisoft.framework.jm.common.JmSearchParam;
@@ -32,14 +31,6 @@ public class JobManagerBO implements IJobManagerBO {
 
 	private Scheduler scheduler;
 	private JMDAO jmDAO;
-
-	public JMDAO getJmDAO() {
-		return jmDAO;
-	}
-
-	public Scheduler getScheduler() {
-		return scheduler;
-	}
 	
 	public void setJmDAO(JMDAO jmDAO) {
 		this.jmDAO = jmDAO;
@@ -48,42 +39,46 @@ public class JobManagerBO implements IJobManagerBO {
 	public void setScheduler(Scheduler scheduler) {
 		this.scheduler = scheduler;
 	}
-	
+
+	/**
+	 * 
+	 * 删除任务
+	 * 
+	 * @param job
+	 * @throws Exception
+	 *
+	 * @变更记录 2018年1月2日 上午11:23:41 李瑞辉 创建
+	 *
+	 */
+	@Override
+	public void deleteJob(JmJobDetail job) throws Exception {
+		
+		scheduler.deleteJob(new JobKey(job.getJob_name(), job.getJob_group()));
+	}
+
 	/**
 	 * 删除任务
 	 * 
-	 * @param jobID
+	 * @param jobId
 	 * @return 
 	 * @throws Exception
 	 *
 	 * @变更记录 2017年12月28日 下午1:19:35 李瑞辉 创建
 	 *
 	 */
-	public String deleteJob(String jobID) throws Exception {
-		// 获取任务信息
-		if (null != jobID && !"".equals(jobID.trim())) {
-			Object obj = this.jmDAO.find(JmJobDetail.class, jobID);
-			if (obj != null) {
-				// 停止任务
-				this.stopJob((JmJobDetail) obj);
-				// 删除
-				this.jmDAO.delete((JmJobDetail) obj);
-			} else {
-				throw new Exception("任务已不存在,请刷新列表");
-			}
+	public void deleteJob(String jobId) throws Exception {
+		JmJobDetail job = (JmJobDetail) this.jmDAO.find(JmJobDetail.class, jobId);
+		if (job.getInstance_status() == 0) {
+			this.deleteJob(job);			
 		}
-
-		return jobID;
+		this.jmDAO.delete(job);
 	}
-
+	
 	/**
 	 * 编辑任务时
 	 * 获取调度任务的信息
 	 * 
-	 * @param jobID
-	 *            任务ID
-	 * @param forEdit
-	 *            是否用于编辑
+	 * @param jobId 任务ID
 	 * @return
 	 * @throws Exception
 	 * 
@@ -91,28 +86,14 @@ public class JobManagerBO implements IJobManagerBO {
 	 * @变更记录 2017年12月28日 下午1:16:36 李瑞辉 创建
 	 *
 	 */
-	public JmJobDetail findJobDetailByJobID(String jobID) {
-		// 获取任务信息
-		if (null != jobID && !"".equals(jobID.trim())) {
-			JmJobDetail jobDetail = null;
-			Object obj = this.jmDAO.find(JmJobDetail.class, jobID);
-			if (null != obj) {
-				jobDetail = (JmJobDetail) obj;
-				return jobDetail;
-			}
-		}
-		return null;
+	public JmJobDetail findJobDetailByJobID(String jobId) {
+		return (JmJobDetail) this.jmDAO.find(JmJobDetail.class, jobId);
 	}
 
 	/**
 	 * 获取任务列表分页
 	 * 
-	 * @param curpage
-	 *            当前页码
-	 * @param percount
-	 *            分页数
-	 * @param queryParm
-	 *            任务名称或作业信息模糊匹配
+	 * @param param 任务名称或作业信息模糊匹配
 	 *
 	 * @变更记录 2017年12月28日 下午1:16:05 李瑞辉 创建
 	 *
@@ -124,21 +105,12 @@ public class JobManagerBO implements IJobManagerBO {
 		pageInfoDTO.setTotalcount(this.jmDAO.findJobCount(param));
 		// 分页
 		List<JmJobDetail> details = this.jmDAO.findJobList(param);
-		if (!ListUitl.isListEmpty(details)) {
-			for (JmJobDetail jmJobDetail : details) {
-				if (jmJobDetail.getQrtzcount() == 0 && jmJobDetail.getIsexecuting() == 1) {
-					jmJobDetail.setIsexecuting(0);//是否存在调度实例【0-不存在 1-存在】
-					this.jmDAO.update(jmJobDetail);
-				}
-			}
-		}
-
 		pageInfoDTO.setRetlist(details);
 		pageInfoDTO.setPercount(param.getPercount());
 
 		return pageInfoDTO;
 	}
-
+	
 	/**
 	 * 查询运行情况
 	 * 
@@ -154,6 +126,30 @@ public class JobManagerBO implements IJobManagerBO {
 
 	}
 
+	/**
+	 * 
+	 * 测试方法
+	 * 
+	 * @throws Exception
+	 *
+	 * @变更记录 2017年12月28日 下午1:30:09 李瑞辉 创建
+	 *
+	 */
+	@Override
+	public void fun() throws Exception {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+		Date date = Calendar.getInstance().getTime();
+		System.out.println("当前时间\t" + sdf.format(date));
+		System.out.println("这是一个测试方法");		
+	}
+
+	public JMDAO getJmDAO() {
+		return jmDAO;
+	}
+
+	public Scheduler getScheduler() {
+		return scheduler;
+	}
 	
 
 	/**
@@ -174,63 +170,145 @@ public class JobManagerBO implements IJobManagerBO {
 		this.updateJmJobDetail(detail, 1, 0, baos.toString());// 异常,已停止
 	}
 
+	@Override
+	public void pauseAll() throws Exception {
+		
+		
+	}
+
 	/**
-	 * 保存任务调度信息
+	 * 暂停任务
 	 * 
-	 * @param jobDetail
-	 *            任务调度信息
+	 * @param jobId 任务ID
+	 * @throws Exception
+	 *
+	 * @变更记录 2017年12月28日 下午1:19:15 李瑞辉 创建
+	 *
+	 */
+	private void pauseJob(JmJobDetail job) throws Exception {
+		scheduler.pauseJob(new JobKey(job.getJob_name(), job.getJob_group()));
+	}
+
+	/**
+	 * 暂停任务
+	 * 
+	 * @param jobId 任务ID
+	 * @throws Exception
+	 *
+	 * @变更记录 2017年12月28日 下午1:19:15 李瑞辉 创建
+	 *
+	 */
+	@Override
+	public void pauseJob(String jobId) throws Exception {
+		JmJobDetail job = (JmJobDetail) this.jmDAO.find(JmJobDetail.class, jobId);
+		this.pauseJob((JmJobDetail) job);
+	}
+
+	@Override
+	public void pauseJobs(List<JmJobDetail> jobs) throws Exception {
+		
+	}
+
+	@Override
+	public void resumeAll() throws Exception {
+		
+	}
+
+	/**
+	 * 
+	 * 恢复任务
+	 * 
+	 * @param job
+	 * @throws Exception
+	 *
+	 * @变更记录 2018年1月3日 上午8:50:29 李瑞辉 创建
+	 *
+	 */
+	@Override
+	public void resumeJob(String jobId) throws Exception {
+		JmJobDetail job = (JmJobDetail) this.jmDAO.find(JmJobDetail.class, jobId);
+		this.resumeJob((JmJobDetail) job);		
+	}
+	/**
+	 * 
+	 * 恢复任务
+	 *
+	 * @变更记录 2018年1月3日 上午9:18:39 LRH 创建
+	 *
+	 */
+	private void resumeJob(JmJobDetail job) throws Exception {
+		scheduler.resumeJob(new JobKey(job.getJob_name(), job.getJob_group()));				
+	}
+	
+	/**
+	 * 
+	 * 恢复任务
+	 *
+	 * @变更记录 2018年1月3日 上午9:18:55 LRH 创建
+	 *
+	 */
+	@Override
+	public void resumeJobs(List<JmJobDetail> jobs) throws Exception {
+	}
+
+	/**
+	 * 保存或更新任务调度
+	 * 
+	 * @param jobDetail 任务调度信息
 	 * @return 
 	 *
 	 * @变更记录 2017年12月28日 下午1:17:30 李瑞辉 创建
 	 *
 	 */
 	@Override
-	public String saveJob(JmJobDetail jobDetail) throws Exception {
-		if (null != jobDetail) {
-			// 验证任务名称与分组分组的唯一性
-			boolean isExist = this.jmDAO.findJobByNameAndGroup(jobDetail.getJob_name(), jobDetail.getJob_group(), jobDetail.getId());
-			if (isExist) 
-				return "已存在相同的任务名称和任务分组";
-			
-			
-			// 作业类 和bean是否合法
+	public String saveOrUpdateJob(JmJobDetail jobDetail) throws Exception {
+		/**
+		 * 验证一
+		 * 验证标准方式或普通方式
+		 */
+		/* 标准方式 即实现Job接口的类 */
+		if (jobDetail.getIsjobclass() == 1) {
 			boolean flag = false;
-			// 任务要执行的作业类
-			if (jobDetail.getIsjobclass() == 1) {
-				try {
-					Class<?> forName = Class.forName(jobDetail.getJob_class_name());
-					for (Class<?> o : forName.getInterfaces()) {
-						if (Job.class == o) {
-							flag = true;
-							break;
-						}
-					}
-				} catch (ClassNotFoundException e) {
-					throw new WisoftException("执行类不合法！");
+			try {
+				Class<?> clazz = Class.forName(jobDetail.getJob_class_name());
+				for (Class<?> o : clazz.getInterfaces()) {
+					if (flag = (Job.class == o)) break;
 				}
 				if (!flag)
-					throw new WisoftException("执行类不合法！");
+					return "非标准方式";
+			} catch (ClassNotFoundException e) {
+				return "未查询到指定的类";
+			}				
+		} else { /* 普通方式 */
+			// 验证Bean和方法
+			if (SpringBeanUtil.containsBean(jobDetail.getJob_bean_name())) {
 			} else {
-				// 验证bean是否存在
-				if (SpringBeanUtil.containsBean(jobDetail.getJob_bean_name())) {
-				} else {
-					throw new WisoftException("Bean名称不存在！");
-				}
+				throw new WisoftException("错误");
+			}
 
-			}
-			if (null != jobDetail.getId() && !"".equals(jobDetail.getId().trim())) {
-				// 停止任务
-				this.stopJob(jobDetail);
-				this.jmDAO.update(jobDetail);
-			} else {
-				jobDetail.setJob_create_time(DateUtil.getFullDate());
-				this.jmDAO.save(jobDetail);
-			}
 		}
+		
+		/**
+		 * 验证二
+		 * 验证任务名称与分组分组的唯一性
+		 */
+		boolean isExist = this.jmDAO.findJobByNameAndGroup(jobDetail.getJob_name(), jobDetail.getJob_group(), jobDetail.getId());
+		if (isExist)
+			return "已存在相同的任务名称和任务分组";
+		
+		if (null != jobDetail.getId()) {//更新方式
+			if (jobDetail.getInstance_status() == 0) {//如果任务正在运行则需要暂停它
+				this.pauseJob(jobDetail);
+			}
+			jobDetail.setInstance_status(-1);//设置为【未运行】状态			
+			this.jmDAO.update(jobDetail);
+		} else {//新增方式
+			jobDetail.setJob_create_time(DateUtil.getFullDate()).setInstance_status(-1);			
+			this.jmDAO.save(jobDetail);
+		}		
 		return jobDetail.getId();
 	}
 
-	
 
 	/**
 	 * 启动任务
@@ -242,131 +320,64 @@ public class JobManagerBO implements IJobManagerBO {
 	 *
 	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public void startJob(JmJobDetail job) throws Exception {
-		if (job.getIsexecuting() == 1) {
-			return;
-		}
-		Scheduler s1 = scheduler;
-		JobDetail jobDetail = null;
-		if (1 == job.getIsjobclass()) {
-			// 任务要执行的作业类
-			jobDetail = JobBuilder.newJob((Class<? extends Job>) Class.forName(job.getJob_class_name()))
-					.withIdentity(job.getJob_name(), job.getJob_group()).storeDurably(false).build();
+	private void startJob(JmJobDetail job) throws Exception {
 
-		} else {
-			jobDetail = JobBuilder.newJob(SpringJobDetail.class).withIdentity(job.getJob_name(), job.getJob_group())
-					.storeDurably(false).build();
+		JobDetail jobDetail;
+		/* 标准方式的任务 即实现Job接口的类 */
+		if (1 == job.getIsjobclass()) {
+			jobDetail = JobBuilder.newJob((Class<? extends Job>) Class.forName(job.getJob_class_name())).withIdentity(job.getJob_name(), job.getJob_group()).storeDurably(false).build();
+		} else {/* 普通方式的任务 */
+			jobDetail = JobBuilder.newJob(SpringJobDetail.class).withIdentity(job.getJob_name(), job.getJob_group()).storeDurably(false).build();
 			jobDetail.getJobDataMap().put(SpringJobDetail.BEAN_NAME, job.getJob_bean_name());
 			jobDetail.getJobDataMap().put(SpringJobDetail.METHOD_NAME, job.getJob_method_name());
 		}
-		// 简单/复杂调度判断
+		
+		Trigger trigger;
+		// 一次性调度触发器
 		if (job.getTrigger_type() == 0) {
-			// 调度开始时间
 			Date dateTime = new Date();
 			if (null != job.getStarttime()) {
 				dateTime = DateUtil.string2datetime(job.getStarttime());
-			} else if (0 != job.getTime_limit() && 0 != job.getTime_unit()) {
-				// 系统当前时间+间隔时间后
+			} else if (0 != job.getTime_limit() && 0 != job.getTime_unit()) {	
 				long startTime = System.currentTimeMillis()
 						+ new Long((long) (job.getTime_limit() * job.getTime_unit() * 60)) * 1000L;
 				dateTime = new Date(startTime);
 			}
-			org.quartz.SimpleTrigger simpleTrigger = (SimpleTrigger) TriggerBuilder.newTrigger()
-					.withIdentity(job.getJob_name(), job.getJob_group()).startAt(dateTime).forJob(jobDetail).build();
-			// 删除job的实例数据
-			s1.deleteJob(new JobKey(job.getJob_name(), job.getJob_group()));
-			// 启动job
-			s1.scheduleJob(jobDetail, simpleTrigger);
-		} else {
-			org.quartz.CronTrigger cronTrigger = null;
+			trigger = TriggerBuilder.newTrigger().withIdentity(job.getJob_name(), job.getJob_group()).startAt(dateTime).forJob(jobDetail).build();
+		} else {/* 周期性调度触发器 */
 			if (SSUtil.isEmpty(job.getEndtime())) {
-				cronTrigger = TriggerBuilder.newTrigger().withIdentity(job.getJob_name(), job.getJob_group())
+				trigger = TriggerBuilder.newTrigger().withIdentity(job.getJob_name(), job.getJob_group())
 						.startAt(DateUtil.string2datetime(job.getStarttime()))
 						.withSchedule(CronScheduleBuilder.cronSchedule(job.getCron_expression())).build();
-			} else {// 结束时间
-				cronTrigger = TriggerBuilder.newTrigger().withIdentity(job.getJob_name(), job.getJob_group())
+			} else {
+				trigger = TriggerBuilder.newTrigger().withIdentity(job.getJob_name(), job.getJob_group())
 						.startAt(DateUtil.string2datetime(job.getStarttime()))
 						.endAt(DateUtil.string2datetime(job.getEndtime()))
 						.withSchedule(CronScheduleBuilder.cronSchedule(job.getCron_expression())).build();
 			}
-			// 删除job的实例数据
-			s1.deleteJob(new JobKey(job.getJob_name(), job.getJob_group()));
-			// 启动job
-			s1.scheduleJob(jobDetail, cronTrigger);
+
+
 		}
-		// 更新jmjobdetail表状态
-		this.updateJmJobDetail(job, 0, 1, "");// 正常,执行中
+		scheduler.scheduleJob(jobDetail, trigger);
+
+		// 将Job的状态更新为【运行】状态
+		job.setInstance_status(0);
+		jmDAO.update(job);
 	}
 
 	/**
 	 * 启动任务
 	 * 
-	 * @param jobID
-	 *            任务ID
+	 * @param jobId 任务ID
 	 * @throws Exception
 	 *
 	 * @变更记录 2017年12月28日 下午1:18:32 李瑞辉 创建
 	 *
 	 */
 	@Override
-	public void startJob(String jobID) throws Exception {
-		// 获取任务信息
-		if (null != jobID && !"".equals(jobID.trim())) {
-			Object obj = this.jmDAO.find(JmJobDetail.class, jobID);
-			if (obj != null) {
-				// 启动任务
-				this.startJob((JmJobDetail) obj);
-			} else {
-				throw new Exception("任务已不存在,请刷新列表");
-			}
-		}
-	}
-
-	/**
-	 * 停止任务
-	 * 
-	 * @param jobID
-	 *            任务ID
-	 * @throws Exception
-	 *
-	 * @变更记录 2017年12月28日 下午1:19:15 李瑞辉 创建
-	 *
-	 */
-	@Override
-	public void stopJob(JmJobDetail job) throws Exception {
-		if (job.getIsexecuting() == 0) {
-			return;
-		}
-		Scheduler s1 = scheduler;		
-		// 删除job实例
-		s1.deleteJob(new JobKey(job.getJob_name(), job.getJob_group()));
-		// 更新jmjobdetail表中的相关状态
-		this.updateJmJobDetail(job, 0, 0, "");// 正常,不存在调度实例
-	}
-
-	/**
-	 * 停止任务
-	 * 
-	 * @param jobID
-	 *            任务ID
-	 * @throws Exception
-	 *
-	 * @变更记录 2017年12月28日 下午1:19:15 李瑞辉 创建
-	 *
-	 */
-	@Override
-	public void stopJob(String jobID) throws Exception {
-		// 获取任务信息
-		if (null != jobID && !"".equals(jobID.trim())) {
-			Object obj = this.jmDAO.find(JmJobDetail.class, jobID);
-			if (obj != null) {
-				// 停止任务
-				this.stopJob((JmJobDetail) obj);
-			} else {
-				throw new Exception("任务已不存在,请刷新列表");
-			}
-		}
+	public void startJob(String jobId) throws Exception {
+		JmJobDetail job = (JmJobDetail) this.jmDAO.find(JmJobDetail.class, jobId);
+		this.startJob(job);
 	}
 
 	/**
@@ -378,24 +389,6 @@ public class JobManagerBO implements IJobManagerBO {
 		detail.setException_info(exception);
 		detail.setIsexecuting(isexecuting);
 		this.jmDAO.update(detail);
-	}
-
-	
-	/**
-	 * 
-	 * 测试方法
-	 * 
-	 * @throws Exception
-	 *
-	 * @变更记录 2017年12月28日 下午1:30:09 李瑞辉 创建
-	 *
-	 */
-	@Override
-	public void fun() throws Exception {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-		Date date = Calendar.getInstance().getTime();
-		System.out.println("当前时间\t" + sdf.format(date));
-		System.out.println("这是一个测试方法");		
 	}
 	
 }

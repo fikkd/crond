@@ -227,10 +227,10 @@
 		}, 'closejm');
 		// 任务调度信息页面展示
 		function showJobInstance(jobID) {
-			var url = BASEPATH + "jm/toJmInstance.do?id=" + jobID, title = '异常信息查看';
+			var url = BASEPATH + "jm/toJmInstance.do?id=" + jobID;
 			jmCloseLayer.show({
 				content : url,
-				title : title,
+				title : '异常信息查看',
 				shade : [ 0 ],
 				area : [ '650px', '570px' ]
 			});

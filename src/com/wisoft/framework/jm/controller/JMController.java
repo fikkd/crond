@@ -50,7 +50,7 @@ public class JMController {
 
 	
 	/**
-	 * 跳转到新建任务调度页面
+	 * 跳转到新建或编辑任务调度页面
 	 * 
 	 * @param modelMap
 	 * @param id
@@ -63,7 +63,7 @@ public class JMController {
 	@RequestMapping("/toJmEdit")
 	public String toJobDetail(ModelMap modelMap, String id, boolean isView) {
 		try {
-			if (!SSUtil.isEmpty(id)) {
+			if (null != id && !"".equals(id.trim())) {
 				JmJobDetail detail = this.jobManagerBO.findJobDetailByJobID(id);
 				modelMap.addAttribute("jobDetail", detail);
 			}
@@ -103,10 +103,6 @@ public class JMController {
 		return "framework/jm/jobCron-2";
 	}
 	
-
-	
-
-	
 	/**
 	 * 任务调度详情
 	 * 
@@ -126,7 +122,6 @@ public class JMController {
 			job_group = new String(job_group.getBytes("ISO-8859-1"), "UTF-8");
 			list = this.jobManagerBO.findQrtzTriggers(job_name, job_group);
 			modelMap.addAttribute("trigger", list);
-
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -138,15 +133,14 @@ public class JMController {
 	 * 
 	 * 任务 异常跳转
 	 * 
-	 * @param id
-	 *            任务id
+	 * @param id 任务id
 	 * @return
 	 * 
 	 * @变更记录 2016-3-11 下午4:59:37武林林 创建
 	 * 
 	 */
 	@RequestMapping("/toJmInstance")
-	public String toJmInstance(ModelMap modelMap, String id, boolean isVie) {
+	public String toJmInstance(ModelMap modelMap, String id) {
 		try {
 			if (!SSUtil.isEmpty(id)) {
 				JmJobDetail detail = this.jobManagerBO.findJobDetailByJobID(id);
@@ -162,28 +156,22 @@ public class JMController {
 	/**
 	  * 获取任务列表
 	 * 
-	 * @param curpage
-	 *            当前页面
-	 * @param percount
-	 *            分页数
-	 * @return
-	 *
 	 * @变更记录 2017年12月28日 下午2:05:59 李瑞辉 创建
 	 *
 	 */
 	@ResponseBody
 	@RequestMapping("/getJobList")
 	public AjaxResult getJobList(JmSearchParam param) {
-		AjaxResult result = new AjaxResult(false);
+		AjaxResult ar = new AjaxResult(false);
 		try {
 			PageInfoDTO pageInfo = this.jobManagerBO.findJobList(param);
-			result.setSuccess(true);
-			result.setData(pageInfo);
+			ar.setSuccess(true);
+			ar.setData(pageInfo);
 		} catch (Exception e) {
 			logger.error(this, e);
-			result.setMsg(e.getMessage());
+			ar.setMsg(e.getMessage());
 		}
-		return result;
+		return ar;
 	}
 
 	
@@ -201,7 +189,7 @@ public class JMController {
 	public AjaxResult savejob(JmJobDetail jopbDetail) {
 		AjaxResult ar = new AjaxResult(false);
 		try {
-			String data = this.jobManagerBO.saveJob(jopbDetail);
+			String data = this.jobManagerBO.saveOrUpdateJob(jopbDetail);
 			if (data.matches(".*[\u4e00-\u9fa5].*")) {/** 返回值中包含中文说明保存或更新时存在问题 			
 			 															        之所以这么判断, 那是因为BO层在正常的情况下返回值是不包含中文的 */
 				ar.setMsg(data);
@@ -215,77 +203,73 @@ public class JMController {
 		return ar;
 	}
 
+	
 	/**
-	 * 
-	 * 删除任务调度详细
+	 * 删除任务调度
 	 * 
 	 * @param id
-	 *            任务id
 	 * @return
-	 * 
-	 * @变更记录 2016-3-11 下午4:59:37武林林 创建
-	 * 
+	 *
+	 * @变更记录 2018年1月3日 上午8:55:38 李瑞辉 创建
+	 *
 	 */
 	@ResponseBody
 	@RequestMapping("/deletejob")
 	public AjaxResult deletejob(String id) {
-		AjaxResult ret = new AjaxResult(false);
+		AjaxResult ar = new AjaxResult(false);
 		try {
-			String flag = this.jobManagerBO.deleteJob(id);
-			ret.setData(flag);
-			ret.setSuccess(true);
+			this.jobManagerBO.deleteJob(id);			
+			ar.setSuccess(true);
 		} catch (Exception e) {
 			logger.error(this, e);
-			ret.setMsg(e.getMessage());
+			ar.setMsg(e.getMessage());
 		}
-		return ret;
+		return ar;
 	}
 
 	/**
 	 * 
 	 * 启动任务
 	 * 
-	 * @param jobID
-	 *            任务ID
+	 * @param jobId 任务ID
 	 * 
 	 * @变更记录 2016-3-9 下午7:22:21 华盛 创建
 	 * 
 	 */
 	@ResponseBody
 	@RequestMapping("/startjob")
-	public AjaxResult startJob(String jobID) {
-		AjaxResult ret = new AjaxResult(false);
+	public AjaxResult startJob(String jobId) {
+		AjaxResult ar = new AjaxResult(false);
 		try {
-			this.jobManagerBO.startJob(jobID);
-			ret.setSuccess(true);
+			this.jobManagerBO.startJob(jobId);
+			ar.setSuccess(true);
 		} catch (Exception e) {
-			ret.setMsg("设置有误");
+			ar.setMsg("设置有误");
 			logger.error(this, e);
 		}
-		return ret;
+		return ar;
 	}
 
 	/**
 	 * 
 	 * 停止任务
 	 * 
-	 * @param jobID
-	 *            任务ID
+	 * @param jobId 任务ID
 	 * 
 	 * @变更记录 2016-3-9 下午7:22:57 华盛 创建
 	 * 
 	 */
 	@ResponseBody
 	@RequestMapping("/stopjob")
-	public AjaxResult stopjob(String jobID) {
-		AjaxResult ret = new AjaxResult(false);
+	public AjaxResult stopjob(String jobId) {
+		AjaxResult ar = new AjaxResult(false);
 		try {
-			this.jobManagerBO.stopJob(jobID);
-			ret.setSuccess(true);
+			this.jobManagerBO.pauseJob(jobId);
+			ar.setSuccess(true);
 		} catch (Exception e) {
 			logger.error(this, e);
 		}
-		return ret;
+		return ar;
 	}
 
 	
@@ -303,16 +287,16 @@ public class JMController {
 	@ResponseBody
 	@RequestMapping("/valideRunJob")
 	public AjaxResult valideRunJob(ModelMap modelMap, String job_group, String job_name) {
-		AjaxResult ret = new AjaxResult(false);
+		AjaxResult ar = new AjaxResult(false);
 		try {
 			job_name = new String(job_name.getBytes("ISO-8859-1"), "UTF-8");
 			job_group = new String(job_group.getBytes("ISO-8859-1"), "UTF-8");
 			JmQrtzTriggers sl = this.jobManagerBO.findQrtzTriggers(job_name, job_group);
-			ret.setData(sl);
-			ret.setSuccess(true);
+			ar.setData(sl);
+			ar.setSuccess(true);
 		} catch (Exception e) {
 			logger.error(this, e);
 		}
-		return ret;
+		return ar;
 	}
 }

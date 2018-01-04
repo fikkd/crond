@@ -40,8 +40,20 @@
 										<button class="btn-mid" id="startJobBtn" >
 											<span class="fa fa-check"></span> 启动
 										</button>
+										<button class="btn-mid" id="startJobBtn" >
+											<span class="fa fa-check"></span> 全部启动
+										</button>
 										<button class="btn-mid btn-submit" id="stopJobBtn" >
-											<span class="fa fa-pause"></span> 停止
+											<span class="fa fa-pause"></span> 暂停
+										</button>
+										<button class="btn-mid btn-submit" id="stopJobBtn" >
+											<span class="fa fa-pause"></span> 全部暂停
+										</button>
+										<button class="btn-mid btn-submit" id="stopJobBtn" >
+											<span class="fa fa-pause"></span> 恢复
+										</button>
+										<button class="btn-mid btn-submit" id="stopJobBtn" >
+											<span class="fa fa-pause"></span> 全部恢复
 										</button>
 										<button class="btn-mid" id="runJobBtn" >
 											<span class="fa fa-search"></span>运行情况

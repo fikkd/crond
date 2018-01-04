@@ -108,20 +108,24 @@ $(function() {
         });
 	}
 	
-	/** 改变 Bean 注入启用状态 */
-	function changeBean() {
-		var isBean = $('#bean').prop('checked');
-		$('tr[data-bean]').find('>td input').prop('disabled', false);
+	/** 改变普通方式启用状态 */
+	function changeCType() {
+		var isBean = $('[name="ctype"][value="general"]').prop('checked');
+		$('tr[data-bean]').find('>td input').removeAttr("readonly");
 		var beanval = isBean ? 'class' : 'bean';
-		$('tr[data-bean="' + beanval + '"]').find('>td input').prop('disabled', true);
+		$('tr[data-bean="' + beanval + '"]').find('>td input').attr("readonly","readonly");
 	}
 	
 	/** 倒计时执行 */
 	function changeCountDown() {
 		var isCountDown = $('#countDown').prop('checked');
-		$('tr[data-countdown="countdown"]').find('>td input,>td select').prop('disabled', !isCountDown);
-		time_limit && time_limit.setEnable(isCountDown);//禁用数字组件
-		$('[name="starttime"]').prop('disabled', isCountDown);
+		if (isCountDown) {
+			$('tr[data-countdown="countdown"]').find('>td input,>td select').removeAttr("readonly");
+			$('[name="exectime"]').unbind('click');
+		} else {
+			$('tr[data-countdown="countdown"]').find('>td input,>td select').attr("readonly","readonly");
+		}
+		time_limit && time_limit.setEnable(isCountDown);
 	}
 	
 	/** 改变调度类型 */
@@ -129,47 +133,51 @@ $(function() {
 		var val = $('[name="dispatch"]:checked').val();
 		var comEl = $('tr[data-dispatch="com"]'), oneEl = $('tr[data-dispatch="one"]');
 		if (val == 'one') {// 一次性
-			comEl.find('>td input').prop('disabled', true);
-			comEl.find('>td .input-group-btn').addClass('disabled');
-			$('#changeJobCron').unbind();
-			$('#changeJobCronS').unbind();
-			$('#countDown').prop('disabled', false);
+			$('#changeJobCron').off('click');
+			$('#changeJobCronS').off('click');
+			$('[name="stime"]').off('click', fShowDate);
+			$('[name="etime"]').off('click', fShowDate);
 			changeCountDown();
 		} else {// 周期性
-			comEl.find('>td input').prop('disabled', false);
-			comEl.find('>td .input-group-btn').removeClass('disabled');// 启用按钮
 			$('#changeJobCron').click(showJobCron);
 			$('#changeJobCronS').click(showJobCronS);
-			oneEl.find('>td input,>td select').prop('disabled', true);
+			$('[name="stime"]').on();
+			$('[name="etime"]').on();
 		}
 	}
 	/** 精准设置回调 */
 	function cronLayer_cb(args) {
 		console.log('回到方法被调用'+args);
-		jobCronInfo = args.jobCronInfo;
-		$('[name="cron_expression"]').val(args.jobCronInfo);
-		startsj = args.starttime;
-		endsj = args.endtime;
+		var arr = args.split('|');
+		$('[name="cron_expression"]').val(args[0].trim());
+		$('[name="cron_zh_cn"]').val(arr[1]);
 	}
 	/** 常规设置的回调 */
 	function cronLayerS_cb(args) {
 	}
 	
+	var fShowDate = function(e) {
+		WdatePicker({			
+			dateFmt:'yyyy-MM-dd HH:mm:ss',
+			minDate:'%y-%M-%d'			
+		}, false, e);
+	};
+
+	
 	/** ============================================================= **/
 	
 	/** 底部按钮操作 */
 	$('.pageBot_in').on('click', 'button', bottomHandler);
-	/** 默认启用 Bean 方式 */
-	$('#bean').change(changeBean).prop('checked', isjobclass == 0 ? true : false);
-	changeBean();
+	
+	$('[name="ctype"][value="general"]').prop('checked', true);
+	$('[name="ctype"]').change(changeCType);
+	changeCType();
 	
 	// 调度类型
 	$('[name="dispatch"]').change(changeDispatch);
-	if (trigger_type == 0) {
-		$('[name="dispatch"][value="one"]').prop('checked', true);
-	} else {
-		$('[name="dispatch"][value="com"]').prop('checked', true);
-	}
+	$('[name="dispatch"][value="one"]').prop('checked', true);
+	changeDispatch();
+
 	// 倒计时
 	// 一次性调度的数字框初始化
 	time_limit = $('#time_limit').initSelNum({
@@ -183,13 +191,16 @@ $(function() {
 	} else {
 		$('#countDown').prop('checked', true);
 	}
+	// 倒计时间
 	$('#countDown').change(changeCountDown);
 	changeCountDown();
+	
 	$("#starttime").val(starttime);
 	$("#time_unit").val(time_unit);
 
-	changeDispatch();
 	
+	$('.txt-date').on('click.date', fShowDate);
+
 	var cron_expression = $('[name="cron_expression"]').val();
 	var cron_zh_cn = $('[name="cron_zh_cn"]').val();
 	

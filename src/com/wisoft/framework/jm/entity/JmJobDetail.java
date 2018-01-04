@@ -39,7 +39,9 @@ public class JmJobDetail implements java.io.Serializable {
 	private int isjobclass = 0;
 	/**
 	 * 
-	 * Job执行类完整类名
+	 * 实现Job接口的任务完整类名
+	 * 
+	 * 例如: com.wisoft.framework.jm.bo.MyJob
 	 * 
 	 */
 	private java.lang.String job_class_name;
@@ -122,11 +124,19 @@ public class JmJobDetail implements java.io.Serializable {
 	private int isexecuting;
 	/**
 	 * 
+	 * 当前运行实例数量【废弃-2017-12-28】
+	 * 李瑞辉在2017-12-28修改
+	 */
+	private int qrtzcount = 0; 
+	/**
 	 * 
-	 * 实例运行状态【-1未运行 0-正常运行 1-异常】
+	 * 
+	 * 任务运行状态【-1未运行 0-正常运行 1-暂停/停止 2-异常】
 	 * 
 	 */
-	private int instance_status = -1;
+	private int instance_status = -1;	
+	
+	
 	/**
 	 * 
 	 * 异常信息
@@ -134,12 +144,7 @@ public class JmJobDetail implements java.io.Serializable {
 	 */
 	private java.lang.String exception_info;
 	
-	/**
-	 * 
-	 * 当前运行实例数量【废弃-2017-12-28】
-	 * 李瑞辉在2017-12-28修改
-	 */
-	private int qrtzcount = 0; 
+	
 	/**
 	 * 
 	 * 排序号
@@ -154,168 +159,189 @@ public class JmJobDetail implements java.io.Serializable {
 		return id;
 	}
 
-	public void setId(java.lang.String id) {
+	public JmJobDetail setId(java.lang.String id) {
 		this.id = id;
+		return this;
 	}
 
 	public java.lang.String getJob_name() {
 		return job_name;
 	}
 
-	public void setJob_name(java.lang.String job_name) {
+	public JmJobDetail setJob_name(java.lang.String job_name) {
 		this.job_name = job_name;
+		return this;
 	}
 
 	public java.lang.String getJob_group() {
 		return job_group;
 	}
 
-	public void setJob_group(java.lang.String job_group) {
+	public JmJobDetail setJob_group(java.lang.String job_group) {
 		this.job_group = job_group;
+		return this;
 	}
 
 	public java.lang.String getDescription() {
 		return description;
 	}
 
-	public void setDescription(java.lang.String description) {
+	public JmJobDetail setDescription(java.lang.String description) {
 		this.description = description;
+		return this;
 	}
 
 	public int getIsjobclass() {
 		return isjobclass;
 	}
 
-	public void setIsjobclass(int isjobclass) {
+	public JmJobDetail setIsjobclass(int isjobclass) {
 		this.isjobclass = isjobclass;
+		return this;
 	}
 
 	public java.lang.String getJob_class_name() {
 		return job_class_name;
 	}
 
-	public void setJob_class_name(java.lang.String job_class_name) {
+	public JmJobDetail setJob_class_name(java.lang.String job_class_name) {
 		this.job_class_name = job_class_name;
+		return this;
 	}
 
 	public java.lang.String getJob_bean_name() {
 		return job_bean_name;
 	}
 
-	public void setJob_bean_name(java.lang.String job_bean_name) {
+	public JmJobDetail setJob_bean_name(java.lang.String job_bean_name) {
 		this.job_bean_name = job_bean_name;
+		return this;
 	}
 
 	public java.lang.String getJob_method_name() {
 		return job_method_name;
 	}
 
-	public void setJob_method_name(java.lang.String job_method_name) {
+	public JmJobDetail setJob_method_name(java.lang.String job_method_name) {
 		this.job_method_name = job_method_name;
+		return this;
 	}
 
 	public java.lang.String getJob_create_time() {
 		return job_create_time;
 	}
 
-	public void setJob_create_time(java.lang.String job_create_time) {
+	public JmJobDetail setJob_create_time(java.lang.String job_create_time) {
 		this.job_create_time = job_create_time;
+		return this;
 	}
 
 	public int getTrigger_type() {
 		return trigger_type;
 	}
 
-	public void setTrigger_type(int trigger_type) {
+	public JmJobDetail setTrigger_type(int trigger_type) {
 		this.trigger_type = trigger_type;
+		return this;
 	}
 
 	public int getTime_limit() {
 		return time_limit;
 	}
 
-	public void setTime_limit(int time_limit) {
+	public JmJobDetail setTime_limit(int time_limit) {
 		this.time_limit = time_limit;
+		return this;
 	}
 
 	public int getTime_unit() {
 		return time_unit;
 	}
 
-	public void setTime_unit(int time_unit) {
+	public JmJobDetail setTime_unit(int time_unit) {
 		this.time_unit = time_unit;
+		return this;
 	}
 
 	public java.lang.String getCron_expression() {
 		return cron_expression;
 	}
 
-	public void setCron_expression(java.lang.String cron_expression) {
+	public JmJobDetail setCron_expression(java.lang.String cron_expression) {
 		this.cron_expression = cron_expression;
+		return this;
 	}
 
 	public java.lang.String getStarttime() {
 		return starttime;
 	}
 
-	public void setStarttime(java.lang.String starttime) {
+	public JmJobDetail setStarttime(java.lang.String starttime) {
 		this.starttime = starttime;
+		return this;
 	}
 
 	public java.lang.String getEndtime() {
 		return endtime;
 	}
 
-	public void setEndtime(java.lang.String endtime) {
+	public JmJobDetail setEndtime(java.lang.String endtime) {
 		this.endtime = endtime;
+		return this;
 	}
 
 	public int getIsexecuting() {
 		return isexecuting;
 	}
 
-	public void setIsexecuting(int isexecuting) {
+	public JmJobDetail setIsexecuting(int isexecuting) {
 		this.isexecuting = isexecuting;
+		return this;
 	}
 
 	public int getInstance_status() {
 		return instance_status;
 	}
 
-	public void setInstance_status(int instance_status) {
+	public JmJobDetail setInstance_status(int instance_status) {
 		this.instance_status = instance_status;
+		return this;
 	}
 
 	public java.lang.String getException_info() {
 		return exception_info;
 	}
 
-	public void setException_info(java.lang.String exception_info) {
+	public JmJobDetail setException_info(java.lang.String exception_info) {
 		this.exception_info = exception_info;
+		return this;
 	}
 
 	public int getQrtzcount() {
 		return qrtzcount;
 	}
 
-	public void setQrtzcount(int qrtzcount) {
+	public JmJobDetail setQrtzcount(int qrtzcount) {
 		this.qrtzcount = qrtzcount;
+		return this;
 	}
 
 	public int getOrderNum() {
 		return orderNum;
 	}
 
-	public void setOrderNum(int orderNum) {
+	public JmJobDetail setOrderNum(int orderNum) {
 		this.orderNum = orderNum;
+		return this;
 	}
 
 	public java.lang.String getCron_ZH_CN() {
 		return cron_ZH_CN;
 	}
 
-	public void setCron_ZH_CN(java.lang.String cron_ZH_CN) {
+	public JmJobDetail setCron_ZH_CN(java.lang.String cron_ZH_CN) {
 		this.cron_ZH_CN = cron_ZH_CN;
+		return this;
 	}
 
 	@Override

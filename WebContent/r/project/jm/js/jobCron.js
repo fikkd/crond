@@ -25,15 +25,26 @@ $(function(){
             case 'save':
                 if(aTabsData.length){
                     // 依次调用tab 页的的fSave函数
+                	
+                	var arr,flag;
                     for(var i= 0,curTabval,len=aTabsData.length;i<len;i++){
                         curTabval=aTabsData[i]['val'];
-                        oApi[curTabval].fSave && oApi[curTabval].fSave();
+                        var s = oApi[curTabval].fSave && oApi[curTabval].fSave();
+                        if (s) {
+                        	console.log('===========');
+                        }
+                        if (!(flag=s)) {
+                        	break;
+                        }
+                        /*arr=s.split('|');
+                        cronExpression+=arr[0]+' ';
+                        cronExpressionZhCN = arr[1] + cronExpressionZhCN;*/
                     }
-                    console.log('父页面接收到子页面的参数'+cronExpression);
-                    console.log('父页面接收到子页面的参数'+cronExpressionZhCN);
                 }
-                fromWin.cusLayer[layerName](cronExpression);// 调用打开弹框的页面中定义的callback 方法
-				fromWin.closeLayer[layerName]();// 关闭弹窗
+                if (flag) {
+                	fromWin.cusLayer[layerName](cronExpression+'|'+cronExpressionZhCN);// 调用打开弹框的页面中定义的callback 方法
+                	fromWin.closeLayer[layerName]();// 关闭弹窗                	
+                }
                 break;
         }
     };
@@ -50,8 +61,9 @@ $(function(){
 		// 接收父页面传递过来的参数
 		cronExpression = data.cron_expression;
 		cronExpressionZhCN = data.cron_zh_cn;
-		
-		$('[data-val="cronInfo"]').html("如果这是一个非常长的字符串");
+		if (!cronExpression) {
+			oMainApi.cronExpression = "3-4/2 4-5/4 19-10/6 ? 10-12/3 1,3,5 2018-2020/2";
+		}
 		
 		// 扩展主页面全局接口
 	    oMainApi['oHideParams'] = oHideParams;
