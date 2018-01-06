@@ -24,23 +24,31 @@ $(function(){
         switch($(this).attr('data-type')){
             case 'save':
                 if(aTabsData.length){
-                    // 依次调用tab 页的的fSave函数
-                	
-                	var arr,flag;
+                    // 依次调用tab 页的的fSave函数                	
+                	var arr,flag=true,ct=0,dt=0,
+                	cronExpression='',cronExpressionZhCN='';
                     for(var i= 0,curTabval,len=aTabsData.length;i<len;i++){
                         curTabval=aTabsData[i]['val'];
                         var s = oApi[curTabval].fSave && oApi[curTabval].fSave();
-                        if (s) {
-                        	console.log('===========');
-                        }
-                        if (!(flag=s)) {
+                        
+                        if (s=='false' && !(flag=false)) {//年的tab中如果输入的内容不正确则不允许关闭弹框
+                        	$.showMsg("年份设置不符合规范");
                         	break;
                         }
-                        /*arr=s.split('|');
+                        arr=s.split('|');                        
+                        if ((arr[0]=='?') && (++ct) && (ct==2) && !(flag=false)) {
+            				$.showMsg("日和周有且必须设置一个");
+                        	break;
+                        }
+                        if ((arr[0]!='?') && (++dt) && (dt==7) && !(flag=false)) {
+                        	$.showMsg("日和周必须有一个不设置");
+                        	break;
+                        }
+                        
                         cronExpression+=arr[0]+' ';
-                        cronExpressionZhCN = arr[1] + cronExpressionZhCN;*/
+                        cronExpressionZhCN = arr[1] + cronExpressionZhCN;
                     }
-                }
+                }                                
                 if (flag) {
                 	fromWin.cusLayer[layerName](cronExpression+'|'+cronExpressionZhCN);// 调用打开弹框的页面中定义的callback 方法
                 	fromWin.closeLayer[layerName]();// 关闭弹窗                	
@@ -61,8 +69,11 @@ $(function(){
 		// 接收父页面传递过来的参数
 		cronExpression = data.cron_expression;
 		cronExpressionZhCN = data.cron_zh_cn;
-		if (!cronExpression) {
-			oMainApi.cronExpression = "3-4/2 4-5/4 19-10/6 ? 10-12/3 1,3,5 2018-2020/2";
+		if (!cronExpression) {//新建任务时默认表达式
+			oMainApi.cronExpression = "* * * * * ? *";
+		} else {
+			oMainApi.cronExpression = cronExpression;	
+			oMainApi.cronExpressionZhCN = cronExpressionZhCN;	
 		}
 		
 		// 扩展主页面全局接口

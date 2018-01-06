@@ -13,7 +13,7 @@ String baseUrl = request.getScheme()+"://"+request.getServerName()+":"+serverPor
 <head lang="en">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>任务调度详情</title>
+    <title>运行情况查看</title>
     <script type="text/javascript">
         var BASEPATH='${basePath}';
     </script>

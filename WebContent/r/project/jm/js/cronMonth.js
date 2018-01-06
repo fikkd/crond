@@ -17,29 +17,26 @@ $(function() {
 		month='',monthZhCN='';
 		// 获取被选择的值
 		if ($("input[name='month']:eq(0):checked").val()) {
-			month = '?';
-			monthZhCN = '每隔一月';
-		}
-		if ($("input[name='month']:eq(1):checked").val()) {
 			month = '*';
 			monthZhCN = '每隔一月';
 		}
+		if ($("input[name='month']:eq(1):checked").val()) {
+			var b=jqContMo.find('[name="begin-mon"]').val();
+			var s=jqContMo.find('[name="step-mon"]').val();
+			month = b+'/'+s;
+			monthZhCN = b+'月开始, 每隔'+s+'月';
+		}
 		if ($("input[name='month']:eq(2):checked").val()) {
-			month = jqContMo.find('[name="begin"]').val()+'/'+jqContMo.find('[name="step"]').val();
-			monthZhCN = jqContMo.find('[name="begin"]').val() +'月开始, 每隔' + jqContMo.find('[name="step"]').val() + '月';
+			var b=jqContMo.find('[name="bt-begin-mon"]').val();
+			var l=jqContMo.find('[name="bt-end-mon"]').val();
+			var s=jqContMo.find('[name="bt-step-mon"]').val();
+			month = b+'-'+l+'/'+s;
+			monthZhCN = b+'至'+l+'月之间每隔'+s+'月';
 		}
 		if ($("input[name='month']:eq(3):checked").val()) {
-			month = jqContMo.find('[name="between-begin"]').val()+'-'+jqContMo.find('[name="between-end"]').val() + '/1';
-			monthZhCN = jqContMo.find('[name="between-begin"]').val() +'至' + jqContMo.find('[name="between-end"]').val() + '月之间每隔一月';
-		}
-		if ($("input[name='month']:eq(4):checked").val()) {
-			month = jqContMo.find('[name="bt-begin"]').val()+'-'+jqContMo.find('[name="bt-end"]').val() + '/' + jqContMo.find('[name="bt-step"]').val();
-			monthZhCN = jqContMo.find('[name="bt-begin"]').val() +'至' + jqContMo.find('[name="bt-end"]').val() + '月之间每隔' + jqContMo.find('[name="bt-step"]').val() + '月';
-		}
-		if ($("input[name='month']:eq(5):checked").val()) {
 			var len = jqContMo.find("input:checkbox:checked").length;
 			if (len==0) {
-				jqContMo.find("input[type='checkbox'][value='0']").prop("checked",true);				
+				jqContMo.find("input[type='checkbox'][value='1']").prop("checked",true);				
 			}
 			$.each(jqContMo.find('input:checkbox'),function(){
 				if(this.checked){
@@ -49,8 +46,6 @@ $(function() {
 			month=month.replace(/(.*),/g, '$1');
 			monthZhCN=month + '月';			
 		}
-		console.log('月\t' + month+"|"+monthZhCN);
-		
 		return month+"|"+monthZhCN;
 	};
 	/** ==================== * */
@@ -64,56 +59,40 @@ $(function() {
 		
 		month = oMainApi.cronExpression.split(/\s/g)[4];
 		
-		var arr2,arr3,arr4,arr5;
-		if (month=='0') 	
-			$("input[name='month']:eq(0)").attr("checked",'checked');
+		var arr1,arr2,arr3;
 		if (month=='*')
-			$("input[name='month']:eq(1)").attr("checked",'checked');
+			$("input[name='month']:eq(0)").attr("checked",'checked');
 		if (month.search(/^\d+\/\d+$/g) != -1) {
-			$("input[name='month']:eq(2)").attr("checked",'checked');
-			arr2 = month.split(/\//g);			
+			$("input[name='month']:eq(1)").attr("checked",'checked');
+			arr1 = month.split(/\//g);			
 		}
-		if (month.search(/^\d+-\d+\/1$/g) != -1) {
-			$("input[name='month']:eq(3)").attr("checked",'checked');
-			arr3 = month.replace(/(\d+)-(\d+)\/1/g,'$1,$2').split(',');
-		}
-		if (month.search(/^\d+-\d+\/[^1]$/g) != -1) {
-			$("input[name='month']:eq(4)").attr("checked",'checked');			
-			arr4 = month.replace(/(\d+)-(\d+)\/(\d+)/g,'$1,$2,$3').split(',');
+		if (month.search(/^\d+-\d+\/\d+$/g) != -1) {
+			$("input[name='month']:eq(2)").attr("checked",'checked');			
+			arr2 = month.replace(/(\d+)-(\d+)\/(\d+)/g,'$1,$2,$3').split(',');
 		}
 		if (month.search(/^(\d+,)*\d+$/g) != -1) {			
-			$("input[name='month']:eq(5)").attr("checked",'checked');			
-			arr5 = month.split(',');
-			$.each(arr5, function(index, item){
+			$("input[name='month']:eq(3)").attr("checked",'checked');			
+			arr3 = month.split(',');
+			$.each(arr3, function(index, item){
 				$('[data-val="month"]').find("input[type='checkbox'][value='"+item+"']").prop("checked",true);				
 			});
 		}
 
 		
 	    oBegin=jqContMo.find('.js-begin-mon').initSelNum({
-	        minVal:0,maxVal:60,name:'begin-mon',value:arr2?arr2[0]:0
+	        minVal:0,maxVal:60,name:'begin-mon',value:arr1?arr1[0]:0
 	    });
 	    oStep=jqContMo.find('.js-step-mon').initSelNum({
-	    	minVal:0,maxVal:60,name:'step-mon',value:arr2?arr2[1]:0
-	    });
-	    oBetweenBegin=jqContMo.find('.js-between-begin-mon').initSelNum({
-	    	minVal:0,maxVal:60,name:'between-begin-mon',value:arr3?arr3[0]:0
-	    });    
-	    oBetweenEnd=jqContMo.find('.js-between-end-mon').initSelNum({
-	    	minVal:0,maxVal:60,name:'between-end-mon',value:arr3?arr3[1]:0
+	    	minVal:0,maxVal:60,name:'step-mon',value:arr1?arr1[1]:0
 	    });
 	    oBtBegin=jqContMo.find('.js-bt-begin-mon').initSelNum({
-	    	minVal:0,maxVal:60,name:'bt-begin-mon',value:arr4?arr4[0]:0
+	    	minVal:0,maxVal:60,name:'bt-begin-mon',value:arr2?arr2[0]:0
 	    });
 	    oBtEnd=jqContMo.find('.js-bt-end-mon').initSelNum({
-	    	minVal:0,maxVal:60,name:'bt-end-mon',value:arr4?arr4[1]:0
+	    	minVal:0,maxVal:60,name:'bt-end-mon',value:arr2?arr2[1]:0
 	    });
 	    oBtStep=jqContMo.find('.js-bt-step-mon').initSelNum({
-	    	minVal:0,maxVal:60,name:'bt-step-mon',value:arr4?arr4[2]:2
+	    	minVal:0,maxVal:60,name:'bt-step-mon',value:arr2?arr2[2]:1
 	    });
-
-		
 	};
-
-	
 });

@@ -16,33 +16,19 @@
 							<tr>
 								<th><input type="radio" name="month" value="mon0" /></th>
 								<td>
-									不设置
+									每隔一月触发
 								</td>
 							</tr>	
 							<tr>
 								<th><input type="radio" name="month" value="mon1" /></th>
 								<td>
-									每隔一月触发
-								</td>
-							</tr>	
-							<tr>
-								<th><input type="radio" name="month" value="mon2" /></th>
-								<td>
 									第
 									<div class="txt js-begin-mon" style="width: 70px;"></div> 月开始, 每隔&nbsp;
 									<div class="txt js-step-mon" style="width: 70px;inline-block;"></div> 月触发
 								</td>
-							</tr>
+							</tr>		
 							<tr>
-								<th><input type="radio" name="month" value="mon3" /></th>
-								<td>
-									在
-									<div class="txt js-between-begin-mon" style="width: 70px;"></div> 至&nbsp;
-									<div class="txt js-between-end-mon" style="width: 70px;inline-block;"></div> 月之间每隔一月触发
-								</td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="month" value="mon4" /></th>
+								<th><input type="radio" name="month" value="mon2" /></th>
 								<td>
 									在
 									<div class="txt js-bt-begin-mon" style="width: 70px;"></div> 至&nbsp;
@@ -51,7 +37,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="month" value="mon5" /></th>
+								<th><input type="radio" name="month" value="mon3" /></th>
 								<td>
 									<input type="checkbox" value="1"> 1 
 									<input type="checkbox" value="2"> 2 

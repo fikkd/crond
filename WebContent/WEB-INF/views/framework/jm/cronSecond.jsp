@@ -7,7 +7,7 @@
 				<div class="panel-h-txt">秒</div>
 			</div>
 			<div class="panel-c">
-				<div style="height:450px;">
+				<div style="height:380px;">
 					<table class="detailtable " cellpadding="0" cellspacing="0" style="width: 100%;" data-val="second">
 						<colgroup>
 							<col style="width: 17px;" />
@@ -16,14 +16,10 @@
 						<tbody>
 							<tr>
 								<th><input type="radio" name="second" value="sec0" /></th>
-								<td><label>0 秒</label></td><!-- 0 -->
-							</tr>
-							<tr>
-								<th><input type="radio" name="second" value="sec1" /></th>
 								<td><label>每隔一秒触发</label></td><!-- * -->
 							</tr>
 							<tr>
-								<th><input type="radio" name="second" value="sec2" /></th>
+								<th><input type="radio" name="second" value="sec1" /></th>
 								<td>
 									第
 									<div class="txt js-begin" style="width: 70px;"></div> 秒开始, 每隔&nbsp;
@@ -31,15 +27,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="second" value="sec3" /></th>
-								<td>
-									在
-									<div class="txt js-between-begin" style="width: 70px;"></div> 至&nbsp;
-									<div class="txt js-between-end" style="width: 70px;inline-block;"></div> 秒之间每隔一秒触发<!-- 3-6/1 -->
-								</td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="second" value="sec4" /></th>
+								<th><input type="radio" name="second" value="sec2" /></th>
 								<td>
 									在
 									<div class="txt js-bt-begin" style="width: 70px;"></div> 至&nbsp;
@@ -48,7 +36,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="second" value="sec5" /></th>
+								<th><input type="radio" name="second" value="sec3" /></th>
 								<td>
 									<input type="checkbox" value="0"> 00
 									<input type="checkbox" value="1"> 01

@@ -61,14 +61,15 @@ public class JMController {
 	 *
 	 */
 	@RequestMapping("/toJmEdit")
-	public String toJobDetail(ModelMap modelMap, String id, boolean isView) {
+	public String toJobDetail(ModelMap modelMap, String id, boolean isView, boolean isEdit, boolean isNew) {
 		try {
 			if (null != id && !"".equals(id.trim())) {
 				JmJobDetail detail = this.jobManagerBO.findJobDetailByJobID(id);
 				modelMap.addAttribute("jobDetail", detail);
-			}
-			// 是否查看
+			} 
 			modelMap.addAttribute("isView", isView);
+			modelMap.addAttribute("isEdit", isEdit);
+			modelMap.addAttribute("isNew", isNew);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -96,15 +97,9 @@ public class JMController {
 		modelMap.addAttribute("endtime", endtime);
 		return "framework/jm/jobCron";
 	}
-
-	
-	@RequestMapping("/toCron-2")
-	public String toCronD(ModelMap modelMap, String cron, String starttime, String endtime) {
-		return "framework/jm/jobCron-2";
-	}
 	
 	/**
-	 * 任务调度详情
+	 * 任务运行情况查看
 	 * 
 	 * @param modelMap
 	 * @param job_group
@@ -129,15 +124,16 @@ public class JMController {
 	}
 
 	
+	
 	/**
+	 * 异常跳转
 	 * 
-	 * 任务 异常跳转
-	 * 
-	 * @param id 任务id
+	 * @param modelMap
+	 * @param id
 	 * @return
-	 * 
-	 * @变更记录 2016-3-11 下午4:59:37武林林 创建
-	 * 
+	 *
+	 * @变更记录 2018年1月5日 下午1:35:32 李瑞辉 创建
+	 *
 	 */
 	@RequestMapping("/toJmInstance")
 	public String toJmInstance(ModelMap modelMap, String id) {
@@ -185,18 +181,17 @@ public class JMController {
 	 *
 	 */
 	@ResponseBody
-	@RequestMapping("/savejob")
-	public AjaxResult savejob(JmJobDetail jopbDetail) {
+	@RequestMapping("/saveJob")
+	public AjaxResult saveJob(JmJobDetail jopbDetail, String fired) {
 		AjaxResult ar = new AjaxResult(false);
-		try {
-			String data = this.jobManagerBO.saveOrUpdateJob(jopbDetail);
-			if (data.matches(".*[\u4e00-\u9fa5].*")) {/** 返回值中包含中文说明保存或更新时存在问题 			
-			 															        之所以这么判断, 那是因为BO层在正常的情况下返回值是不包含中文的 */
+		try {			
+			String data = this.jobManagerBO.saveOrUpdateJob(jopbDetail, fired);
+			if (data.matches(".*[\u4e00-\u9fa5].*")) {// 返回值中包含中文说明保存或更新时存在问题. 之所以这么判断, 那是因为BO层在正常的情况下返回值是不包含中文的
 				ar.setMsg(data);
 			} else {
 				ar.setData(data);
 				ar.setSuccess(true);				
-			}
+			}			
 		} catch (Exception e) {
 			logger.error(this, e);			
 		}
@@ -227,21 +222,23 @@ public class JMController {
 		return ar;
 	}
 
+	
 	/**
-	 * 
 	 * 启动任务
 	 * 
-	 * @param jobId 任务ID
-	 * 
-	 * @变更记录 2016-3-9 下午7:22:21 华盛 创建
-	 * 
+	 * @param jobId
+	 * @param all
+	 * @return
+	 *
+	 * @变更记录 2018年1月5日 下午12:57:12 李瑞辉 创建
+	 *
 	 */
 	@ResponseBody
-	@RequestMapping("/startjob")
-	public AjaxResult startJob(String jobId) {
+	@RequestMapping("/startJob")
+	public AjaxResult startJob(String jobId, String all) {
 		AjaxResult ar = new AjaxResult(false);
 		try {
-			this.jobManagerBO.startJob(jobId);
+			this.jobManagerBO.startJob(jobId, all);
 			ar.setSuccess(true);
 		} catch (Exception e) {
 			ar.setMsg("设置有误");
@@ -250,21 +247,46 @@ public class JMController {
 		return ar;
 	}
 
+	
 	/**
+	 * 停止/暂停任务
 	 * 
-	 * 停止任务
-	 * 
-	 * @param jobId 任务ID
-	 * 
-	 * @变更记录 2016-3-9 下午7:22:57 华盛 创建
-	 * 
+	 * @param jobId
+	 * @param all
+	 * @return
+	 *
+	 * @变更记录 2018年1月5日 下午12:58:13 李瑞辉 创建
+	 *
 	 */
 	@ResponseBody
-	@RequestMapping("/stopjob")
-	public AjaxResult stopjob(String jobId) {
+	@RequestMapping("/stopJob")
+	public AjaxResult stopJob(String jobId, String all) {
 		AjaxResult ar = new AjaxResult(false);
 		try {
-			this.jobManagerBO.pauseJob(jobId);
+			this.jobManagerBO.pauseJob(jobId, all);
+			ar.setSuccess(true);
+		} catch (Exception e) {
+			logger.error(this, e);
+		}
+		return ar;
+	}
+	
+	/**
+	 * 恢复任务
+	 * 
+	 * @param jobId
+	 * @param all
+	 * @return
+	 *
+	 * @变更记录 2018年1月5日 下午1:09:51 李瑞辉 创建
+	 *
+	 */
+	@ResponseBody
+	@RequestMapping("/resumeJob")
+	public AjaxResult resumeJob(String jobId, String all) {
+		AjaxResult ar = new AjaxResult(false);
+		try {
+			this.jobManagerBO.resumeJob(jobId, all);
 			ar.setSuccess(true);
 		} catch (Exception e) {
 			logger.error(this, e);

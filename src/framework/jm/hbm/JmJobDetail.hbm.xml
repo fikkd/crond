@@ -44,8 +44,11 @@
       <property name="cron_expression" lazy="false">
          <column name="cron_expression" length="120"/>
       </property>
-      <property name="cron_ZH_CN" lazy="false">
+      <property name="cron_zh_cn" lazy="false">
          <column name="cron_zh_cn" length="200"/>
+      </property>
+      <property name="exectime" lazy="false">
+         <column name="exectime" length="20"/>
       </property>
       <property name="starttime" lazy="false">
          <column name="starttime" length="20"/>

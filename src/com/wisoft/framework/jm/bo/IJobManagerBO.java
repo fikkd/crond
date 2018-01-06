@@ -105,7 +105,7 @@ public interface IJobManagerBO {
 	 * @变更记录 2018年1月2日 上午11:20:47 李瑞辉 创建
 	 *
 	 */
-	public void pauseJob(String jobId) throws Exception;
+	public void pauseJob(String jobId, String all) throws Exception;
 	
 	/**
 	 * 
@@ -132,7 +132,7 @@ public interface IJobManagerBO {
 	 * @变更记录 2018年1月2日 上午11:20:47 李瑞辉 创建
 	 *
 	 */
-	public void resumeJob(String jobId) throws Exception;
+	public void resumeJob(String jobId, String all) throws Exception;
 	
 	/**
 	 * 
@@ -149,7 +149,7 @@ public interface IJobManagerBO {
 	 * @变更记录 2017年12月28日 下午1:17:30 李瑞辉 创建
 	 *
 	 */
-	public String saveOrUpdateJob(JmJobDetail jobDetail)throws Exception;
+	public String saveOrUpdateJob(JmJobDetail jobDetail, String fired)throws Exception;
 	
 	
 	/**
@@ -158,7 +158,7 @@ public interface IJobManagerBO {
 	 * @变更记录 2017年12月28日 下午1:18:32 李瑞辉 创建
 	 *
 	 */
-	public void startJob(String jobId) throws Exception;
+	public void startJob(String jobId, String all) throws Exception;
 
 
 }

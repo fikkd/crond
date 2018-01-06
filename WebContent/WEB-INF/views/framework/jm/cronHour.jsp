@@ -15,14 +15,10 @@
 						<tbody>
 							<tr>
 								<th><input type="radio" name="hour" value="hor0" /></th>
-								<td><label>0 时</label></td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="hour" value="hor1" /></th>
 								<td><label>每隔一小时触发</label></td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="hour" value="hor2" /></th>
+								<th><input type="radio" name="hour" value="hor1" /></th>
 								<td>
 									第
 									<div class="txt js-begin-hor" style="width: 70px;"></div> 小时开始, 每隔&nbsp;
@@ -30,15 +26,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="hour" value="hor3" /></th>
-								<td>
-									在
-									<div class="txt js-between-begin-hor" style="width: 70px;"></div> 至&nbsp;
-									<div class="txt js-between-end-hor" style="width: 70px;inline-block;"></div> 小时之间每隔一小时触发
-								</td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="hour" value="hor4" /></th>
+								<th><input type="radio" name="hour" value="hor2" /></th>
 								<td>
 									在
 									<div class="txt js-bt-begin-hor" style="width: 70px;"></div> 至&nbsp;
@@ -47,7 +35,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="hour" value="hor5" /></th>
+								<th><input type="radio" name="hour" value="hor3" /></th>
 								<td>
 									AM: 
 									<input type="checkbox" value="0"> 00 

@@ -47,7 +47,7 @@ $(function() {
 		if ($("input[name='week']:eq(5):checked").val()) {
 			var len = jqContW.find("input:checkbox:checked").length;
 			if (len==0) {
-				jqContW.find("input[type='checkbox'][value='0']").prop("checked",true);//如果没有被选择则默认选择第一个				
+				jqContW.find("input[type='checkbox'][value='1']").prop("checked",true);//如果没有被选择则默认选择第一个				
 			}
 			$.each(jqContW.find('input:checkbox'),function(){
 				if(this.checked) {
@@ -58,7 +58,6 @@ $(function() {
 			week=week.replace(/(.*),/g, '$1');
 			weekZhCN=weekZhCN.replace(/(.*),/g, '$1');
 		}
-		console.log('周\t' + week+"|"+weekZhCN);
 		return week+"|"+weekZhCN;
 	};
 	/** ==================== * */

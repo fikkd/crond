@@ -6,7 +6,7 @@
 				<div class="panel-h-txt">日</div>
 			</div>
 			<div class="panel-c">
-				<div style="height:370px;">
+				<div style="height:330px;">
 					<table class="detailtable" cellpadding="0" cellspacing="0" style="width: 100%;" data-val="day">
 						<colgroup>
 							<col style="width: 17px;" />
@@ -35,21 +35,13 @@
 								<th><input type="radio" name="day" value="day3" /></th>
 								<td>
 									在
-									<div class="txt js-between-begin-day" style="width: 70px;"></div> 至&nbsp;
-									<div class="txt js-between-end-day" style="width: 70px;inline-block;"></div> 日之间每隔一天触发
-								</td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="day" value="day4" /></th>
-								<td>
-									在
 									<div class="txt js-bt-begin-day" style="width: 70px;"></div> 至&nbsp;
 									<div class="txt js-bt-end-day" style="width: 70px;inline-block;"></div> 日之间每隔
 									<div class="txt js-bt-step-day" style="width: 70px;inline-block;"></div> 天触发
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="day" value="day5" /></th>
+								<th><input type="radio" name="day" value="day4" /></th>
 								<td>
 									<input type="checkbox" value="1"> 1 
 									<input type="checkbox" value="2"> 2 

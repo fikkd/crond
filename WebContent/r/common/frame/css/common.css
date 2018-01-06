@@ -9,17 +9,17 @@ body,button,input,select,textarea{ font:12px/1.5 "\5FAE\8F6F\96C5\9ED1",arial, v
 ul, ol{list-style: none;}
 table{border-collapse:collapse;}
 a{color: #0E81FE;text-decoration: none;}
-.nowrap{/*绂佹鎹㈣*/
+.nowrap{/*禁止换行*/
     overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;
 }
-.wrap{/*寮哄埗鎹㈣*/
+.wrap{/*强制换行*/
     white-space:normal;
-    word-break:break-all;/*鏀寔IE锛宑hrome锛孎F涓嶆敮鎸�/
-    word-wrap:break-word;/*鏀寔IE锛宑hrome锛孎F*/
+    word-break:break-all;/*支持IE，chrome，FF不支持*/
+    word-wrap:break-word;/*支持IE，chrome，FF*/
 }
-.noselect{/*绂佹閫変腑*/
+.noselect{/*禁止选中*/
     -webkit-touch-callout:none;
     -webkit-user-select:none;
     -khtml-user-select:none;
@@ -43,7 +43,7 @@ a{color: #0E81FE;text-decoration: none;}
     margin-left:.2em;
     margin-right:.2em;
 }
-/* 鍗曢�鎸夐挳 */
+/* 单选按钮 */
 .radio-lab{ margin-left:5px;}
 .radio-lab:first-child{ margin-left:0;}
 .radio-lab>input,
@@ -84,10 +84,6 @@ a{color: #0E81FE;text-decoration: none;}
 }
 .txt-search{
     background:url("../images/search.gif") #fff no-repeat right center;
-    padding-right: 2.3em;
-}
-.txt-delete{
-    background:url("../images/remove.png") #fff no-repeat right center;
     padding-right: 2.3em;
 }
 select.txt{ padding:0 3px;}
@@ -234,7 +230,7 @@ textarea.txt{ height:auto;}
 .search-btn:hover{background:#e6e6e6;}
 
 .advanced.closed{ display: none;}
-.scrolled{}/* 鏍囪鍏冪礌宸叉粴鍔ㄥ埌涓嬫柟锛岄渶瑕佹樉绀�top */
+.scrolled{}/* 标记元素已滚动到下方，需要显示 top */
 .toTop{
     display: none;
     position: fixed;
@@ -264,7 +260,7 @@ textarea.txt{ height:auto;}
 html.fixed,
 html.fixed body,
 html.fixed .page{ height:100%;}
-html.fixed{ min-width: 1024px;}/* 鏈�皬瀹藉害锛�024px */
+html.fixed{ min-width: 1024px;}/* 最小宽度：1024px */
 html.fixed.inframe{ min-width:100%;}
 html.fixed .page{
     position:relative;
@@ -372,7 +368,7 @@ body.transparent{
 }
 .footer-item span{ padding:0 5px;}
 
-/* 椤堕儴瀵艰埅 */
+/* 顶部导航 */
 .topNavs{ float: left;}
 .topNavs>ul.pageScroll{
     padding-top:10px;
@@ -525,8 +521,8 @@ body.transparent{
     /*border: 1px #acacac solid;*/
     table-layout: fixed;
     white-space:normal;
-    word-break:break-all;/*鏀寔IE锛宑hrome锛孎F涓嶆敮鎸�/
-    word-wrap:break-word;/*鏀寔IE锛宑hrome锛孎F*/
+    word-break:break-all;/*支持IE，chrome，FF不支持*/
+    word-wrap:break-word;/*支持IE，chrome，FF*/
     /*background:#FAFAFA;*/
 }
 .detailtable.hasRig{width:100%;}
@@ -603,7 +599,7 @@ body.transparent{
 .listtable>tbody>tr:hover,
 .listtable>tbody>tr:nth-child(odd):hover{background:#f0f0f0;}
 .listtable>tbody>tr.nodata:hover{ background: none;}
-.listtable>tbody>tr.trchk,/*閫変腑琛�/
+.listtable>tbody>tr.trchk,/*选中行*/
 .listtable>tbody>tr:nth-child(odd).trchk{ background: #EAF2FF;}
 .listtable>tbody>tr.now,
 .listtable>tbody>tr:nth-child(odd).now{ background: #FBE8BD;}
@@ -690,7 +686,7 @@ body.transparent{
 .infotable .txt,
 .infotable .txt-mid{ width: 100%; }
 
-/* 鍔炰欢杩涘害 */
+/* 办件进度 */
 .progress{
     background: #FEFF97;
     display: inline-block;
@@ -700,7 +696,7 @@ body.transparent{
 .progress-success{ background: #bef0ac;}
 .progress>.progress-cur{}
 .progress>.progress-total{}
-/* 鍒嗛〉 */
+/* 分页 */
 .manu{
     text-align: center;
     margin-top:5px;
@@ -739,7 +735,7 @@ body.transparent{
 .manu-sel,
 .manu-txt,
 .manu-btn{ vertical-align: top;}
-/* 浜嬮」鍒楄〃 */
+/* 事项列表 */
 .sxlist{
     max-height:135px;
     overflow: auto;
@@ -748,7 +744,7 @@ body.transparent{
     float:left;
     /*padding:2px;*/
     cursor:default;
-    /*寮�叧寮�/
+    /*开关式*/
     width:33.3%;
 }
 .sxlist li>div{
@@ -763,7 +759,7 @@ body.transparent{
 /*.sxlist li.now>div{ background-position: right -47px;}*/
 .sxlist li:hover>div{ color:#37B144;}
 
-/* 鏉愭枡娓呭崟 */
+/* 材料清单 */
 /*.cllist{ }
 .cllist li{
     float:left;
@@ -968,7 +964,7 @@ li.taskitem span.bold{
     padding:12px;
     border-top:solid 1px #fff;
 }
-/* 鎶樺彔鎸夐挳鍒囨崲 */
+/* 折叠按钮切换 */
 .closed-c{ display: inline;}
 .opened-c{ display: none;}
 .opened>.opened-c{ display: inline;}
@@ -1225,7 +1221,7 @@ li.taskitem span.bold{
     background: url("../images/showMore.jpg") no-repeat bottom;
 }
 
-/* tab椤�*/
+/* tab页 */
 .tab-box{ }
 .tab-box-abs{
     position:absolute;
@@ -1323,7 +1319,7 @@ ul.tab-heads-r>.tab-head{ float: right;}
     overflow:auto;
 }
 .tab-cont.now{ display: block;}
-/* 鐢ㄦ埛鐓х墖 */
+/* 用户照片 */
 .personPhoto{
     text-align: center;
     padding:10px;
@@ -1353,7 +1349,7 @@ ul.tab-heads-r>.tab-head{ float: right;}
 .step-cont{ display: none;}
 .step-cont.step-cur{ display: block;}
 
-/** 涓嬫媺妗�dropdown **/
+/** 下拉框 dropdown **/
 .overlay{
     position:fixed;
     top:0; bottom:0;
@@ -1383,7 +1379,7 @@ ul.treeDropdown>li:active{background: #EAEFF3;}
 .fa.stat-green{ color:#8FC31F;}
 .fa.stat-yellow{ color: #e3b368;}
 .fa.stat-red{ color: #E4564B;}
-/* 鏁板瓧缁勪欢 numbox */
+/* 数字组件 numbox */
 .numbox{ position: relative; padding: 0; display: inline-block; vertical-align: middle;}
 .numbox .iptVal{
     width: 100%; height:100%; padding: 0 22px 0 5px;text-align: center; line-height: inherit;
@@ -1402,7 +1398,7 @@ ul.treeDropdown>li:active{background: #EAEFF3;}
 .numbox.disabled .iptVal{ background: #EBEBE4;}
 .numbox.disabled .arrowUp:active,.numbox.disabled .arrowDown:active{background:none;}
 
-/* 瑕嗗啓 ztree 鍥炬爣 */
+/* 覆写 ztree 图标 */
 .ztree.ztree-abs{
     position:absolute;
     top:0; bottom:0;

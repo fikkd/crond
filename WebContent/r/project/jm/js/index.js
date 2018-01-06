@@ -20,12 +20,13 @@
 		function showJobDetail(jobID, isView) {
 			var url = BASEPATH + "jm/toJmEdit.do", title;
 			if (jobID && !isView) {
-				url += "?id=" + jobID;
+				url += "?id=" + jobID+"&isEdit=true";
 				title = '编辑任务调度';
 			} else if (jobID && isView) {
 				url += "?id=" + jobID + "&isView=" + isView;
 				title = '查看任务调度';
 			} else {
+				url += "?isNew=true";
 				title = '新建任务调度';
 			}
 			jmLayer.show({
@@ -46,14 +47,21 @@
 				return;
 			var chks = jmGrid.getCheckedRows();
 			if (chks.length && chks.length == 1) {
-				$.fn.request(BASEPATH + 'jm/startjob.json?jobID=' + chks[0].id,
-						function() {
-							layer.msg('任务启动成功');
-							jmGrid.resetData();
-						}, {}, true);
+				$.fn.request(BASEPATH + 'jm/startJob.json?jobId=' + chks[0].id+'&all=no use',
+					function() {
+						layer.msg('任务启动成功');
+						jmGrid.resetData();
+					}, {}, true);
 			} else {
-				$.showValiTip(this, '请选中一个任务');
+				$.showValiTip(this, '请选择一个任务');
 			}
+		}
+		function startJobAll() {
+			$.fn.request(BASEPATH + 'jm/startJob.json?all=all',
+				function() {
+					layer.msg('任务启动成功');
+					jmGrid.resetData();
+				}, {}, true);
 		}
 		// 停止任务
 		function stopJob() {
@@ -61,13 +69,39 @@
 				return;
 			var chks = jmGrid.getCheckedRows();
 			if (chks.length && chks.length == 1) {
-				$.fn.request(BASEPATH + 'jm/stopjob.json?jobID=' + chks[0].id, function() {
+				$.fn.request(BASEPATH + 'jm/stopJob.json?jobId=' + chks[0].id+'&all=no use', function() {
 					layer.msg('任务已停止');
 					jmGrid.resetData();
 				}, {}, true);
 			} else {
-				$.showValiTip(this, '请选中一个任务');
+				$.showValiTip(this, '请选择一个任务');
 			}
+		}
+		function stopJobAll() {
+			$.fn.request(BASEPATH + 'jm/stopJob.json?all=all', function() {
+				layer.msg('任务已停止');
+				jmGrid.resetData();
+			}, {}, true);
+		}
+		// 恢复任务
+		function resumeJob() {
+			if (!jmGrid)
+				return;
+			var chks = jmGrid.getCheckedRows();
+			if (chks.length && chks.length == 1) {
+				$.fn.request(BASEPATH + 'jm/resumeJob.json?jobId=' + chks[0].id+'&all=no use', function() {
+					layer.msg('任务已恢复');
+					jmGrid.resetData();
+				}, {}, true);
+			} else {
+				$.showValiTip(this, '请选择一个任务');
+			}
+		}
+		function resumeJobAll() {
+			$.fn.request(BASEPATH + 'jm/resumeJob.json?all=all', function() {
+				layer.msg('任务已恢复');
+				jmGrid.resetData();
+			}, {}, true);
 		}
 		// 运行情况
 		function runJob() {
@@ -75,28 +109,16 @@
 				return;
 			var chks = jmGrid.getCheckedRows();
 			if (chks.length && chks.length == 1) {
-				if (chks[0].isexecuting == 1) {
-					var group = chks[0].job_group;
-					var name = chks[0].job_name;
-					$.fn.request(BASEPATH + 'jm/valideRunJob.json?job_group=' + group + '&job_name=' + name, function(data) {
-						if (data) {
-							jmck(group, name);
-						} else {
-							layer.msg('当前任务实例已不存在');
-							jmGrid.resetData();
-						}
-					}, {}, true);
-
-				} else {
-					$.showValiTip(this, '当前任务无实例');
-				}
+				var group = chks[0].job_group;
+				var name = chks[0].job_name;
+				jmck(group, name);
 			} else {
-				$.showValiTip(this, '请选中一个任务');
+				$.showValiTip(this, '请选择一个任务');
 			}
 		}
 		function jmck(group, name) {
 			var url = BASEPATH + "jm/toJmRuningtimePage.do?job_group=" + group
-					+ "&job_name=" + name, title = '任务调度查看';
+					+ "&job_name=" + name, title = '运行情况查看';
 			jmLayer.show({
 				content : url,
 				title : title,
@@ -247,7 +269,7 @@
 				return '<div title="' + bean + '">' + bean + '</div>';
 			}
 		}
-		// 运行状态【-1未运行 0-正常运行 1-异常】
+		// 运行状态【-1未运行 0-正常运行 1-暂停/停止 2-异常】
 		function instance_statusCtrl(val, row, i, datalist) {
 			switch (row.instance_status) {
 			case -1:
@@ -257,6 +279,9 @@
 				return '<div class="stat-bg-green">正常运行</div>';
 				break;
 			case 1:
+				return '<div class="stat-bg-green">暂停</div>';
+				break;
+			case 2:
 				return '<div class="stat-bg-green">异常</div>';
 				break;
 			}
@@ -278,38 +303,59 @@
 				showJobRemove(row.id, row.job_name);
 			}
 		}
-		// 行事件【-1未运行 0-正常运行 1-异常】
+		// 行事件【-1未运行 0-正常运行 1-暂停/停止 2-异常】
 		function jmGrid_rowCtrl_click(e, row, i) {
 			switch (row.instance_status) {
 			case -1:
-				btnDisplay(0, 0, 1, 1);
+				btnDisplay(0, 0, 1, 1, 1);
 				break;
 			case 0:
-				btnDisplay(0, 1, 0, 0);
+				btnDisplay(0, 1, 0, 1, 0);
 				break;
 			case 1:
-				btnDisplay(0, 1, 0, 0);
+				btnDisplay(0, 1, 1, 0, 1);
+				break;
+			case 2:
+				btnDisplay(0, 1, 1, 1, 1);
 				break;
 			}
-		}
-		
-		function btnDisplay(nez, start, stop, run) {// 1-隐藏 0-显示			
+		}		
+		function btnDisplay(nez, start, pause, resume, run) {// 1-隐藏 0-显示			
 			if (nez==0) {
 				$("#newJobBtn").removeClass('disabled');
 			}		 
 			if (start==0) {
 				$("#startJobBtn").removeClass('disabled');
+				$("#startJobBtnAll").removeClass('disabled');
 				$('#startJobBtn').click(startJob);// 启动任务
+				$('#startJobBtnAll').click(startJobAll);
 			} else if (start==1) {
 				$("#startJobBtn").addClass('disabled');				
+				$("#startJobBtnAll").addClass('disabled');				
 				$('#startJobBtn').unbind();
+				$('#startJobBtnAll').unbind();
 			}
-			if (stop==0) {
-				$("#stopJobBtn").removeClass('disabled');
-				$('#stopJobBtn').click(stopJob);// 停止任务
-			} else if (stop==1) {
-				$("#stopJobBtn").addClass('disabled');				
-				$('#stopJobBtn').unbind();
+			if (pause==0) {
+				$("#pauseJobBtn").removeClass('disabled');
+				$("#pauseJobBtnAll").removeClass('disabled');
+				$('#pauseJobBtn').click(stopJob);// 停止任务
+				$('#pauseJobBtnAll').click(stopJobAll);
+			} else if (pause==1) {
+				$("#pauseJobBtn").addClass('disabled');				
+				$("#pauseJobBtnAll").addClass('disabled');				
+				$('#pauseJobBtn').unbind();
+				$('#pauseJobBtnAll').unbind();
+			}
+			if (resume==0) {
+				$("#resumeJobBtn").removeClass('disabled');
+				$("#resumeJobBtnAll").removeClass('disabled');
+				$('#resumeJobBtn').click(resumeJob);// 恢复任务
+				$('#resumeJobBtnAll').click(resumeJobAll);
+			} else if (resume==1) {
+				$("#resumeJobBtn").addClass('disabled');				
+				$("#resumeJobBtnAll").addClass('disabled');				
+				$('#resumeJobBtn').unbind();
+				$('#resumeJobBtnAll').unbind();
 			}
 			if (run==0) {
 				$("#runJobBtn").removeClass('disabled');
@@ -322,7 +368,7 @@
 		
 		// 删除任务
 		function showJobRemove(id, name) {
-			layer.confirm('确定删除"' + name + '"', {
+			layer.confirm('确定删除', {
 				btn : [ '确定', '取消' ]
 			}, function(index) {
 				var url = BASEPATH + 'jm/deletejob.json';
@@ -334,14 +380,6 @@
 				}, true);
 			});
 		}
-		function deleteJob(id) {
-			var url = BASEPATH + 'jm/deletejob.json';
-			$.fn.request(url, function(data) {// 验证是否可删除回调
-			}, {
-				"id" : id
-			}, true);
-		}
-		
 		
 		/** ========================================================== **/
 		

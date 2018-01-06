@@ -6,7 +6,7 @@
 				<div class="panel-h-txt">分</div>
 			</div>
 			<div class="panel-c">
-				<div style="height:450px;">
+				<div style="height:380px;">
 					<table class="detailtable" cellpadding="0" cellspacing="0" style="width: 100%;" data-val="minute">
 						<colgroup>
 							<col style="width: 17px;" />
@@ -15,14 +15,10 @@
 						<tbody>
 							<tr>
 								<th><input type="radio" name="minute" value="min0" /></th>
-								<td><label>0 分</label></td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="minute" value="min1" /></th>
 								<td><label>每隔一分钟触发</label></td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="minute" value="min2" /></th>
+								<th><input type="radio" name="minute" value="min1" /></th>
 								<td>
 									第
 									<div class="txt js-begin-min" style="width: 70px;"></div> 分钟开始, 每隔&nbsp;
@@ -30,15 +26,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="minute" value="min3" /></th>
-								<td>
-									在
-									<div class="txt js-between-begin-min" style="width: 70px;"></div> 至&nbsp;
-									<div class="txt js-between-end-min" style="width: 70px;inline-block;"></div> 分钟之间每隔一分钟触发
-								</td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="minute" value="min4" /></th>
+								<th><input type="radio" name="minute" value="min2" /></th>
 								<td>
 									在
 									<div class="txt js-bt-begin-min" style="width: 70px;"></div> 至&nbsp;
@@ -47,7 +35,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="minute" value="min5" /></th>
+								<th><input type="radio" name="minute" value="min3" /></th>
 								<td>
 									<input type="checkbox" value="0"> 00 
 									<input type="checkbox" value="1"> 01 

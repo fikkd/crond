@@ -15,14 +15,10 @@
 						<tbody>
 							<tr>
 								<th><input type="radio" name="year" value="yer0" /></th>
-								<td><label>不设置</label></td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="year" value="yer1" /></th>
 								<td><label>每隔一年触发</label></td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="year" value="yer2" /></th>
+								<th><input type="radio" name="year" value="yer1" /></th>
 								<td>
 									在
 									<div class="txt js-begin-yer" style="width: 70px;"></div> 年开始, 每隔&nbsp;
@@ -30,21 +26,13 @@
 								</td>
 							</tr>
 							<tr>
-								<th><input type="radio" name="year" value="yer3" /></th>
+								<th><input type="radio" name="year" value="yer2" /></th>
 								<td>
-									在 <input id="yer3" class="txt" type="text" style="width: 232px;" placeholder="2018,2019,2020" /> 年分别触发
+									在 <input id="yer2" class="txt" type="text" style="width: 232px;" placeholder="2018,2019,2020" /> 年分别触发
 								</td>								
 							</tr>
 							<tr>
-								<th><input type="radio" name="year" value="yer4" /></th>
-								<td>
-									在
-									<div class="txt js-between-begin-yer" style="width: 70px;"></div> 至&nbsp;
-									<div class="txt js-between-end-yer" style="width: 70px;inline-block;"></div> 年之间每隔一年触发
-								</td>
-							</tr>
-							<tr>
-								<th><input type="radio" name="year" value="yer5" /></th>
+								<th><input type="radio" name="year" value="yer3" /></th>
 								<td>
 									在
 									<div class="txt js-bt-begin-yer" style="width: 70px;"></div> 至&nbsp;
