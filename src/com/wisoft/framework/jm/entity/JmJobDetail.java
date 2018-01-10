@@ -8,22 +8,17 @@ package com.wisoft.framework.jm.entity;
 public class JmJobDetail implements java.io.Serializable {
 	/**
 	 * 
-	 * id
+	 * 
+	 * 周期性调度的表达式
 	 * 
 	 */
-	private java.lang.String id;
+	private java.lang.String cron_expression;
 	/**
 	 * 
-	 * 任务名称
+	 * 周期性调度中文描述
 	 * 
 	 */
-	private java.lang.String job_name;
-	/**
-	 * 
-	 * 分组名称
-	 * 
-	 */
-	private java.lang.String job_group;
+	private java.lang.String cron_zh_cn;
 	/**
 	 * 
 	 * 任务描述
@@ -33,90 +28,33 @@ public class JmJobDetail implements java.io.Serializable {
 	/**
 	 * 
 	 * 
-	 * 是否是一个实现Job接口的Java类【1-是 0-否】
-	 * 
-	 */
-	private int isjobclass = 0;
-	/**
-	 * 
-	 * 实现Job接口的任务完整类名
-	 * 
-	 * 例如: com.wisoft.framework.jm.bo.MyJob
-	 * 
-	 */
-	private java.lang.String job_class_name;
-	/**
-	 * 
-	 * 调用spring中的bean 名称
-	 * 
-	 */
-	private java.lang.String job_bean_name;
-	/**
-	 * 
-	 * 调用bean中的方法名
-	 * 
-	 */
-	private java.lang.String job_method_name;
-	/**
-	 * 
-	 * 任务创建时间
-	 * 
-	 */
-	private java.lang.String job_create_time;
-	/**
-	 * 
-	 * 调度类型【0-一次性 1-周期性】
-	 * 
-	 */
-	private int trigger_type = 0;
-	/**
-	 * 
-	 * 
-	 * 倒计多少时间触发
-	 * 
-	 */
-	private int time_limit;
-	/**
-	 * 
-	 * 
-	 * 倒计时间单位【小时=60分钟 天=1440分钟 分钟=1分钟】
-	 * 
-	 */
-	private int time_unit;
-	/**
-	 * 
-	 * 
-	 * 周期性调度的表达式
-	 * 
-	 */
-	private java.lang.String cron_expression;
-	
-	/**
-	 * 
-	 * 周期性调度中文描述
-	 * 
-	 */
-	private java.lang.String cron_zh_cn;
-	
-	/**
-	 * 一次性任务执行时间
-	 */
-	private String exectime;
-	
-	/**
-	 * 
-	 * 
-	 * 开始时间
-	 * 
-	 */
-	private java.lang.String starttime;
-	/**
-	 * 
-	 * 
 	 * 结束时间
 	 * 
 	 */
 	private java.lang.String endtime;
+	/**
+	 * 
+	 * 异常信息
+	 * 
+	 */
+	private java.lang.String exception_info;
+	/**
+	 * 一次性任务执行时间
+	 */
+	private String exectime;
+	/**
+	 * 
+	 * id
+	 * 
+	 */
+	private java.lang.String id;
+	/**
+	 * 
+	 * 
+	 * 任务运行状态【-1未运行 0-正常运行 1-暂停/停止 2-异常】
+	 * 
+	 */
+	private int instance_status = -1;
 	/**
 	 * 
 	 * 
@@ -128,32 +66,94 @@ public class JmJobDetail implements java.io.Serializable {
 	private int isexecuting;
 	/**
 	 * 
-	 * 当前运行实例数量【废弃-2017-12-28】
-	 * 李瑞辉在2017-12-28修改
+	 * 
+	 * 是否是一个实现Job接口的Java类【1-是 0-否】
+	 * 
 	 */
-	private int qrtzcount = 0; 
+	private int isjobclass = 0;
 	/**
 	 * 
-	 * 
-	 * 任务运行状态【-1未运行 0-正常运行 1-暂停/停止 2-异常】
+	 * 调用spring中的bean 名称
 	 * 
 	 */
-	private int instance_status = -1;	
-	
+	private java.lang.String job_bean_name;
+	/**
+	 * 
+	 * 实现Job接口的任务完整类名
+	 * 
+	 * 例如: com.wisoft.framework.jm.bo.MyJob
+	 * 
+	 */
+	private java.lang.String job_class_name;
+	/**
+	 * 
+	 * 任务创建时间
+	 * 
+	 */
+	private java.lang.String job_create_time;
 	
 	/**
 	 * 
-	 * 异常信息
+	 * 分组名称
 	 * 
 	 */
-	private java.lang.String exception_info;
+	private java.lang.String job_group;
 	
+	/**
+	 * 
+	 * 调用bean中的方法名
+	 * 
+	 */
+	private java.lang.String job_method_name;
 	
+	/**
+	 * 
+	 * 任务名称
+	 * 
+	 */
+	private java.lang.String job_name;
 	/**
 	 * 
 	 * 排序号
 	 */
-	private int orderNum = 0; 
+	private int orderNum = 0;
+	/**
+	 * 
+	 * 当前运行实例数量【废弃-2017-12-28】
+	 * 李瑞辉在2017-12-28修改
+	 */
+	private int qrtzcount = 0;
+	/**
+	 * 
+	 * 
+	 * 开始时间
+	 * 
+	 */
+	private java.lang.String starttime; 
+	/**
+	 * 
+	 * 
+	 * 倒计多少时间触发
+	 * 
+	 */
+	private int time_limit;	
+	
+	
+	/**
+	 * 
+	 * 
+	 * 倒计时间单位【小时=60分钟 天=1440分钟 分钟=1分钟】
+	 * 
+	 */
+	private int time_unit;
+	
+	
+	/**
+	 * 
+	 * 调度类型【0-一次性 1-周期性】
+	 * 
+	 */
+	private int trigger_type = 0; 
 
 	public JmJobDetail() {
 

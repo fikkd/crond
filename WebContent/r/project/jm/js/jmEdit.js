@@ -16,8 +16,10 @@ $(function() {
 		case 'submit':// 提交
 			if (!vali.validateAll())
 				return;
-			var url = BASEPATH + "jm/saveJob.json?fired=0";
+			var url = BASEPATH + "jm/saveJob.json";
 			var job = setFormData($('#groupform').serializeObject());
+			delete job.ctype;
+			delete job.dispatch;
 			if (typeof job == 'string') {
 				$.showAlert(job);
 			} else {
@@ -28,7 +30,7 @@ $(function() {
 							parent.closeLayer['jm']();
 						});
 					}
-				}, job, true);
+				}, job, true, true);
 			}
 			break;
 		case 'submitAndFired':
@@ -67,15 +69,15 @@ $(function() {
 			if (null == bmethod || bmethod.trim() == '') {
 				return "方法名不能为空";
 			}
-			job.job_class_name='';
+			job.job_class_name=null;
 		} else {
 			job.isjobclass=1;
 			var cname = job.job_class_name;
 			if (null == cname || cname.trim() == '') {
 				return "标准方式不能为空";
 			}
-			job.job_bean_name='';
-			job.job_method_name='';
+			job.job_bean_name=null;
+			job.job_method_name=null;
 		}
 		
 		// 计划任务【0-一次性 1-周期性】
@@ -88,16 +90,16 @@ $(function() {
 			}
 			job.starttime=$('div[name="stime"]').html();			
 			job.endtime=$('div[name="etime"]').html();
-			job.exectime='';
+			job.exectime=null;
 			job.time_limit=1;
 			job.time_unit=1;
 		} else {
 			var isCountDown = $('#countDown').prop('checked');
 			var val = $('[name="dispatch"]:checked').val();
 			if (isCountDown) {
-				job.time_limt=$('input[name="time_limit"]').val();
+				job.time_limit=$('input[name="time_limit"]').val();
 				job.time_unit=$("#time_unit").val();
-				job.exectime='';
+				job.exectime=null;
 			} else {
 				var exectime = $('div[name="exectime"]').html();
 				if (null == exectime || exectime.trim() == '') {
@@ -107,10 +109,10 @@ $(function() {
 				job.time_limit=1;
 				job.time_unit=1;
 			}			
-			job.cron_expression='';
-			job.cron_zh_cn='';
-			job.starttime='';
-			job.endtime='';
+			job.cron_expression=null;
+			job.cron_zh_cn=null;
+			job.starttime=null;
+			job.endtime=null;
 		}		
 		return job;
 	}
