@@ -60,7 +60,7 @@
 										</button>
 									</div>
 									<div style="float: right;">
-										<input type="text" class="txt-mid" style="width: 200px;" placeholder="任务名称或作业信息" id="queryJobTxt" />
+										<input type="text" class="txt-mid" style="width: 200px;" placeholder="任务名称或分组名称" id="queryJobTxt" />
 										<button class="btn-mid" id="queryJobBtn">
 											<span class="fa fa-search"></span> 查询
 										</button>
@@ -74,7 +74,7 @@
 												<th style="width: 150px">任务名称</th>
 												<th style="width: 150px">作业类</th>
 												<th style="width: 150px">任务描述</th>
-												<th style="width: 150px">实例状态</th>
+												<th style="width: 150px">任务状态</th>
 												<th style="width: 150px">操作</th>
 											</tr>
 										</thead>

@@ -16,10 +16,8 @@ $(function() {
 		case 'submit':// 提交
 			if (!vali.validateAll())
 				return;
-			var url = BASEPATH + "jm/saveJob.json";
-			var job = setFormData($('#groupform').serializeObject());
-			delete job.ctype;
-			delete job.dispatch;
+			var url = BASEPATH + "jm/saveJob.json?fired=0";
+			var job = setFormData($('#groupform').serializeObject());						
 			if (typeof job == 'string') {
 				$.showAlert(job);
 			} else {
@@ -30,14 +28,14 @@ $(function() {
 							parent.closeLayer['jm']();
 						});
 					}
-				}, job, true, true);
+				}, job, true);
 			}
 			break;
 		case 'submitAndFired':
 			if (!vali.validateAll())
 				return;
 			var url = BASEPATH + "jm/saveJob.json?fired=1";
-			var job = setFormData($('#groupform').serializeObject());
+			var job = setFormData($('#groupform').serializeObject());			
 			if (typeof job == 'string') {
 				$.showAlert(job);
 			} else {
@@ -58,9 +56,10 @@ $(function() {
 	}
 	/** 构造与验证表单数据 */
 	function setFormData(job) {
-		var isBean = $("input[name='ctype']:checked").val();
-		if (isBean=='general') {//【1-是 0-否】
-			job.isjobclass=0;
+		var isBean = $("input[data-val='ctype']:checked").val();
+		// 普通方式或标准方式
+		if (isNew && isBean=='general') {//【1-是 0-否】
+			job.impljob='0';
 			var bname = job.job_bean_name;
 			if (null == bname || bname.trim() == '') {
 				return "Bean的名称不能为空";
@@ -70,8 +69,8 @@ $(function() {
 				return "方法名不能为空";
 			}
 			job.job_class_name=null;
-		} else {
-			job.isjobclass=1;
+		} else if (isNew && isBean=="standard"){
+			job.impljob='1';
 			var cname = job.job_class_name;
 			if (null == cname || cname.trim() == '') {
 				return "标准方式不能为空";
@@ -81,38 +80,38 @@ $(function() {
 		}
 		
 		// 计划任务【0-一次性 1-周期性】
-		var dispatch = $('[name="dispatch"]:checked').val();
-		var trigger_type = dispatch == 'one' ? 0 : 1;
+		var dispatch = $('input[data-val="dispatch"]:checked').val();
+		var trigger_type = dispatch == 'one' ? '0' : '1';
 		job.trigger_type = trigger_type;
-		if (trigger_type == 1) {
+		if (trigger_type == '1') {
 			if (null == job.cron_zh_cn || job.cron_zh_cn == '') {
 				return "周期性计划任务设置周期不能为空";
 			}
 			job.starttime=$('div[name="stime"]').html();			
 			job.endtime=$('div[name="etime"]').html();
-			job.exectime=null;
-			job.time_limit=1;
-			job.time_unit=1;
+			job.exectime='';
+			delete job.time_limit;
+			delete job.time_unit;
 		} else {
 			var isCountDown = $('#countDown').prop('checked');
-			var val = $('[name="dispatch"]:checked').val();
+			var val = $('input[data-val="dispatch"]:checked').val();
 			if (isCountDown) {
 				job.time_limit=$('input[name="time_limit"]').val();
 				job.time_unit=$("#time_unit").val();
-				job.exectime=null;
+				job.exectime='';
 			} else {
 				var exectime = $('div[name="exectime"]').html();
 				if (null == exectime || exectime.trim() == '') {
 					return "执行时间不能为空";
 				}
 				job.exectime=exectime;
-				job.time_limit=1;
-				job.time_unit=1;
+				delete job.time_limit;
+				delete job.time_unit;
 			}			
-			job.cron_expression=null;
-			job.cron_zh_cn=null;
-			job.starttime=null;
-			job.endtime=null;
+			job.cron_expression='';
+			job.cron_zh_cn='';
+			job.starttime='';
+			job.endtime='';
 		}		
 		return job;
 	}
@@ -143,7 +142,7 @@ $(function() {
 	
 	/** 改变普通方式启用状态 */
 	function changeCType() {
-		var isBean = $('[name="ctype"][value="general"]').prop('checked');
+		var isBean = $('input[data-val="ctype"][value="general"]').prop('checked');
 		$('tr[data-bean]').find('>td input').removeAttr("readonly");
 		var beanval = isBean ? 'class' : 'bean';
 		$('tr[data-bean="' + beanval + '"]').find('>td input').attr("readonly","readonly");
@@ -166,7 +165,7 @@ $(function() {
 	
 	/** 改变调度类型 */
 	function changeDispatch() {
-		var val = $('[name="dispatch"]:checked').val();
+		var val = $('input[data-val="dispatch"]:checked').val();
 		var comEl = $('tr[data-dispatch="com"]'), oneEl = $('tr[data-dispatch="one"]');
 		if (val == 'one') {// 一次性
 			$('#changeJobCron').off('click');
@@ -218,12 +217,12 @@ $(function() {
 	$('.pageBot_in').on('click', 'button', bottomHandler);
 	
 	
-	if (isjobclass==0) {//【1-是 0-否】
-		$('[name="ctype"][value="general"]').prop('checked', true);		
+	if (impljob=='0') {//【1-是 0-否】
+		$('input[data-val="ctype"][value="general"]').prop('checked', true);		
 	} else {
-		$('[name="ctype"][value="standard"]').prop('checked', true);				
+		$('input[data-val="ctype"][value="standard"]').prop('checked', true);				
 	}
-	$('[name="ctype"]').change(changeCType);
+	$('input[data-val="ctype"]').change(changeCType);
 	changeCType();
 	
 	
@@ -249,12 +248,12 @@ $(function() {
 	
 	
 	// 调度类型
-	if (trigger_type==0) {
-		$('[name="dispatch"][value="one"]').prop('checked', true);		
+	if (trigger_type=='0') {
+		$('input[data-val="dispatch"][value="one"]').prop('checked', true);		
 	} else {
-		$('[name="dispatch"][value="com"]').prop('checked', true);		
+		$('input[data-val="dispatch"][value="com"]').prop('checked', true);		
 	}
-	$('[name="dispatch"]').change(changeDispatch);
+	$('input[data-val="dispatch"]').change(changeDispatch);
 	changeDispatch();
 	
 	

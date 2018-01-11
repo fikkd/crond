@@ -2,11 +2,11 @@
 <something-else-entirely>
 	<proxool>
 		<alias>ds</alias>
-		<driver-url>jdbc:oracle:thin:@192.10.110.205:1526:TEST06</driver-url>
+		<driver-url>jdbc:oracle:thin:@192.10.110.89:1521:ORCL</driver-url>
 		<driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
 		<driver-properties>
-			<property name="user" value="jjxy" />
-			<property name="password" value="jjxy" />
+			<property name="user" value="scott" />
+			<property name="password" value="kitty" />
 		</driver-properties>
 
 		<!-- 定义线程的最大活动时间，超过该时间，连接池将会杀掉该线程。 -->

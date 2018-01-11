@@ -36,13 +36,16 @@
 		var id = '${jobDetail.id}', 
 		starttime = '${jobDetail.starttime}', 
 		endtime = '${jobDetail.endtime}', 
-		isjobclass = '${jobDetail.isjobclass}' || 0, 
+		impljob = '${jobDetail.impljob}' || '0', 
 		trigger_type = '${jobDetail.trigger_type}' || 0, 
-		instance_status = '${jobDetail.instance_status}' || -1, 
-		isexecuting = '${jobDetail.isexecuting}' || 0, 
-		exectime = '${jobDetail.exectime}' || 0,
+		instance_status = '${jobDetail.instance_status}' || '', 
+		exectime = '${jobDetail.exectime}' || '',
 		time_limitv = '${jobDetail.time_limit}' || 1, //倒计时		
-		time_unit = '${jobDetail.time_unit}' == 0 ? 1 : '${jobDetail.time_unit}';
+		time_unit = '${jobDetail.time_unit}' == 0 ? 1 : '${jobDetail.time_unit}',
+		isNew = '${isNew}',
+		isEdit = '${isEdit}',
+		isView = '${isView}';
+		
 	</script>
 </head>
 <body>
@@ -55,7 +58,7 @@
 							<input type="hidden" name="id" value="${jobDetail.id}"> 
 							<input type="hidden" name="exception_info" value="${jobDetail.exception_info}"> 
 							<input type="hidden" name="job_create_time" value="${jobDetail.job_create_time}">
-							<input type="hidden" name="instance_status" value="${jobDetail.instance_status}">
+							<input type="hidden" name="impljob" value="${jobDetail.impljob}">
 							<table class="detailtable" cellspacing="0" cellpadding="0">
 								<colgroup>
 									<col style="width: 130px;" />
@@ -74,47 +77,96 @@
 											<input name="job_group" value="${jobDetail.job_group}" class="txt-mid" placeholder="检查组"/>
 										</td>
 									</tr>
-									<tr data-bean="bean">
-										<th>
-											<label class="radio-lab"><input type="radio" name="ctype" value="general">普通方式</label>
-											<!-- <label class="radio-lab"><input type="checkbox" id="bean">普通方式</label> -->
-										</th>
-										<td>
-											<div style="border: solid 1px #ccc;">
-												<table class="detailtable" cellpadding="0" cellspacing="0" style="width: 100%;">
-													<colgroup>
-														<col style="width: 100px;" />
-														<col />
-													</colgroup>
-													<tbody>
-														<tr>
-															<th>Bean名</th>
-															<td>
-																<input name="job_bean_name"  readonly="readonly" value="${jobDetail.job_bean_name}" class="txt-mid" placeholder="jaxyJM" />
-															</td>
-														</tr>
-														<tr>
-															<th>方法名</th>
-															<td>
-																<input name="job_method_name" readonly="readonly" value="${jobDetail.job_method_name}" class="txt-mid" placeholder="saveJM"/>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</td>
-									</tr>									
-									<tr data-bean="class">
-										<th><label class="radio-lab"><input type="radio" name="ctype" value="standard">标准方式</label></th>
-										<td>
-											<input name="job_class_name" readonly="readonly" value="${jobDetail.job_class_name}" class="txt-mid" placeholder="com.wisoft.framework.jm.JaxyJM"/>
-										</td>
-									</tr>
+									<c:if test="${isNew }">
+										<tr data-bean="bean">
+											<th>
+												<label class="radio-lab"><input type="radio" name="ctype" data-val="ctype" value="general">普通方式</label>																			
+											</th>
+											<td>
+												<div style="border: solid 1px #ccc;">
+													<table class="detailtable" cellpadding="0" cellspacing="0" style="width: 100%;">
+														<colgroup>
+															<col style="width: 100px;" />
+															<col />
+														</colgroup>
+														<tbody>
+															<tr>
+																<th>Bean名</th>
+																<td>
+																	<input name="job_bean_name"  readonly="readonly" value="${jobDetail.job_bean_name}" class="txt-mid" placeholder="jaxyJM" />
+																</td>
+															</tr>
+															<tr>
+																<th>方法名</th>
+																<td>
+																	<input name="job_method_name" readonly="readonly" value="${jobDetail.job_method_name}" class="txt-mid" placeholder="saveJM"/>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</td>
+										</tr>			
+									</c:if>
+									<c:if test="${(isEdit || isView) && !empty jobDetail.job_bean_name }">
+										<tr data-bean="bean">
+											<th>
+												<label class="radio-lab">普通方式</label>																			
+											</th>
+											<td>
+												<div style="border: solid 1px #ccc;">
+													<table class="detailtable" cellpadding="0" cellspacing="0" style="width: 100%;">
+														<colgroup>
+															<col style="width: 100px;" />
+															<col />
+														</colgroup>
+														<tbody>
+															<tr>
+																<th>Bean名</th>
+																<td>
+																	<input name="job_bean_name"  readonly="readonly" value="${jobDetail.job_bean_name}" class="txt-mid" placeholder="jaxyJM" />
+																</td>
+															</tr>
+															<tr>
+																<th>方法名</th>
+																<td>
+																	<input name="job_method_name" readonly="readonly" value="${jobDetail.job_method_name}" class="txt-mid" placeholder="saveJM"/>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</td>
+										</tr>			
+									</c:if>
+									
+										
+									<c:if test="${isNew }">
+										<tr data-bean="class">
+											<th>
+												<label class="radio-lab"><input type="radio" name="ctype" data-val="ctype" value="standard">标准方式</label>																	
+											</th>
+											<td>
+												<input name="job_class_name" readonly="readonly" value="${jobDetail.job_class_name}" class="txt-mid" placeholder="com.wisoft.framework.jm.JaxyJM"/>
+											</td>
+										</tr>									
+									</c:if>		
+									<c:if test="${(isEdit || isView) && !empty jobDetail.job_class_name }">
+										<tr data-bean="class">
+											<th>										
+												<label class="radio-lab">标准方式</label>							
+											</th>
+											<td>
+												<input name="job_class_name" readonly="readonly" value="${jobDetail.job_class_name}" class="txt-mid" placeholder="com.wisoft.framework.jm.JaxyJM"/>
+											</td>
+										</tr>									
+									</c:if>			
+									
 							
 									<tr data-dispatch="one">
 										<!-- 调度类型 -->
 										<th>
-											<label class="radio-lab"><input type="radio" name="dispatch" value="one" />一次性计划任务</label>
+											<label class="radio-lab"><input type="radio" name="dispatch" data-val="dispatch" value="one" />一次性计划任务</label>
 										</th>
 										<td>
 											<div style="border: solid 1px #ccc;">
@@ -153,7 +205,7 @@
 									</tr>
 									<tr data-dispatch="com">
 										<th>
-											<label class="radio-lab"><input type="radio" name="dispatch" value="com">周期性计划任务</label>
+											<label class="radio-lab"><input type="radio" name="dispatch"  data-val="dispatch" value="com">周期性计划任务</label>
 										</th>
 										<td>
 											<div style="border: solid 1px #ccc;" id="tmp">
@@ -213,15 +265,10 @@
 			</div>
 			<div class="pageBot">
 				<div class="pageBot_in">
-					<c:if test="${isEdit && (jobDetail.instance_status==0 ||  jobDetail.instance_status==1)}">
-						<button type="button" class="btn-mid btn-success" data-val="submit">保存</button>						
-					</c:if>
-					<c:if test="${isEdit && jobDetail.instance_status==-1 }">
-						<button type="button" class="btn-mid btn-success" data-val="submit">保存</button>						
-						<button type="button" class="btn-mid btn-success" data-val="submitAndFired">保存并启动</button>					
-					</c:if>
-					<c:if test="${isNew }">
-						<button type="button" class="btn-mid btn-success" data-val="submit">保存</button>						
+					<c:if test="${isNew || isEdit }">
+						<button type="button" class="btn-mid btn-success" data-val="submit">保存</button>					
+					</c:if>					
+					<c:if test="${isNew }">										
 						<button type="button" class="btn-mid btn-success" data-val="submitAndFired">保存并启动</button>					
 					</c:if>
 					<button type="button" class="btn-mid btn-cancel" style="margin-left: .2em;" data-val="cancel">关闭</button>

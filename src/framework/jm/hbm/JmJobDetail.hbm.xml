@@ -17,8 +17,8 @@
       <property name="description" lazy="false">
          <column name="description" length="500"/>
       </property>
-      <property name="isjobclass" type="java.lang.Integer" lazy="false">
-         <column name="isjobclass" not-null="true"/>
+      <property name="impljob" lazy="false">
+         <column name="impljob" length="2"/>
       </property>
       <property name="job_class_name" lazy="false">
          <column name="job_class_name" length="250"/>
@@ -32,8 +32,8 @@
       <property name="job_create_time" lazy="false">
          <column name="job_create_time" length="20"/>
       </property>
-      <property name="trigger_type" type="java.lang.Integer" lazy="false">
-         <column name="trigger_type" not-null="true"/>
+      <property name="trigger_type" lazy="false">
+         <column name="trigger_type" length="2"/>
       </property>
       <property name="time_limit" type="java.lang.Integer" lazy="false">
          <column name="time_limit"/>
@@ -41,14 +41,14 @@
       <property name="time_unit" type="java.lang.Integer" lazy="false">
          <column name="time_unit"/>
       </property>
+      <property name="exectime" lazy="false">
+         <column name="exectime" length="20"/>
+      </property>
       <property name="cron_expression" lazy="false">
          <column name="cron_expression" length="120"/>
       </property>
       <property name="cron_zh_cn" lazy="false">
          <column name="cron_zh_cn" length="200"/>
-      </property>
-      <property name="exectime" lazy="false">
-         <column name="exectime" length="20"/>
       </property>
       <property name="starttime" lazy="false">
          <column name="starttime" length="20"/>
@@ -56,17 +56,14 @@
       <property name="endtime" lazy="false">
          <column name="endtime" length="20"/>
       </property>
-      <property name="isexecuting" type="java.lang.Integer" lazy="false">
-         <column name="isexecuting" not-null="true"/>
-      </property>
-      <property name="instance_status" type="java.lang.Integer" lazy="false">
-         <column name="instance_status"/>
+      <property name="instance_status" lazy="false">
+         <column name="instance_status" length="20"/>
       </property>
       <property name="exception_info" lazy="false">
          <column name="exception_info"/>
       </property>
-      <property name="orderNum" type="java.lang.Integer" lazy="false">
-         <column name="ORDERNUM"/>
+      <property name="ordernum" type="java.lang.Integer" lazy="false">
+         <column name="ordernum"/>
       </property>
    </class>
 </hibernate-mapping>

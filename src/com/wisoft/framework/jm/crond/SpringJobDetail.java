@@ -42,10 +42,6 @@ public class SpringJobDetail implements Job {
 			log.error("JOB执行失败：" + jobKey);
 			log.error(this, e);
 			JobExecutionException jobEx = new JobExecutionException(e);
-			// Quartz will automatically unschedule
-			// all triggers associated with this job
-			// so that it does not run again
-			// 相关的qrtz_job_details,qrtz_cron_triggers,qrtz_triggers记录会在下次web容器重启时自动删除
 			jobEx.setUnscheduleAllTriggers(true);
 
 			// 标记失败信息

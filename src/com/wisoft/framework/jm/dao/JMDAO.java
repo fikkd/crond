@@ -64,21 +64,11 @@ public class JMDAO extends NBaseDao {
 		List<Object> params = new ArrayList<Object>();
 
 		String hql = "select count(*) from JmJobDetail where 1=1 ";
-		if (null != param.getQueryParm() && !"".equals(param.getQueryParm().trim())) {
-			hql += " and (job_name like ? or job_class_name || '.' || job_bean_name like ?)";
-			params.add("%" + param.getQueryParm().trim() + "%");
-			params.add("%" + param.getQueryParm().trim() + "%");
+		if (null != param.getKeyword() && !"".equals(param.getKeyword().trim())) {
+			hql += " and (job_name like ? or job_group like ?)";
+			params.add("%" + param.getKeyword().trim() + "%");
+			params.add("%" + param.getKeyword().trim() + "%");
 		}
-		if (-1 != param.getInstance_status()) {
-			hql += " and instance_status=?";
-			params.add(param.getInstance_status());
-		}
-
-		if (-1 != param.getIsexecuting()) {
-			hql += " and isexecuting=? ";
-			params.add(param.getIsexecuting());
-		}
-
 		return this.findCountsByHql(hql, params.toArray(new Object[0]));
 	}
 
@@ -94,15 +84,13 @@ public class JMDAO extends NBaseDao {
 	@SuppressWarnings("unchecked")
 	public List<JmJobDetail> findJobList(JmSearchParam param) {
 		int offset = (param.getCurpage() - 1) * param.getPercount();
-		String queryParm = "";
-		if (null != param.getQueryParm() && !"".equals(param.getQueryParm().trim())) {
-			queryParm = "%" + param.getQueryParm().trim() + "%";
-		} else {
-			queryParm = "-1";
+		String queryParm = "-1";
+		if (null != param.getKeyword() && !"".equals(param.getKeyword().trim())) {
+			queryParm = "%" + param.getKeyword().trim() + "%";
 		}
 		return this.findPageByNamedQuery("findJobList", JmJobDetail.class,
-				new String[] { "queryParm", "instance_status", "isexecuting" },
-				new Object[] { queryParm, param.getInstance_status(), param.getIsexecuting() }, offset,
+				new String[] { "queryParm" },
+				new Object[] { queryParm }, offset,
 				param.getPercount());
 	}
 

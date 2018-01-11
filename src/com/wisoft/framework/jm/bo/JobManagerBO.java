@@ -57,8 +57,8 @@ public class JobManagerBO implements IJobManagerBO {
 	public void deleteJob(JmJobDetail job) throws Exception {
 		TriggerKey triggerKey = TriggerKey.triggerKey(job.getJob_name()+"-T", job.getJob_group()+"-T");
 
-//        scheduler.pauseTrigger(triggerKey);// 停止触发器  
-//        scheduler.unscheduleJob(triggerKey);// 移除触发器  		
+        scheduler.pauseTrigger(triggerKey);// 停止触发器  
+        scheduler.unscheduleJob(triggerKey);// 移除触发器  		
 		scheduler.deleteJob(new JobKey(job.getJob_name()+"-J", job.getJob_group()+"-J"));// 删除任务  
 	}
 
@@ -209,14 +209,12 @@ public class JobManagerBO implements IJobManagerBO {
 			if (null != list && list.size() > 0) {
 				for (JmJobDetail k : list) {
 					this.pauseJob(k);
-					k.setInstance_status(1);
 					this.jmDAO.update(k);
 				}
 			}
 		} else {
 			JmJobDetail job = (JmJobDetail) this.jmDAO.find(JmJobDetail.class, jobId);
 			this.pauseJob((JmJobDetail) job);
-			job.setInstance_status(1);
 			this.jmDAO.update(job);
 		}
 	}
@@ -249,14 +247,12 @@ public class JobManagerBO implements IJobManagerBO {
 			if (null != list && list.size() > 0) {
 				for (JmJobDetail k : list) {
 					this.resumeJob(k);
-					k.setInstance_status(0);
 					this.jmDAO.update(k);
 				}				
 			}
 		} else {
 			JmJobDetail job = (JmJobDetail) this.jmDAO.find(JmJobDetail.class, jobId);
 			this.resumeJob((JmJobDetail) job);		
-			job.setInstance_status(0);
 			this.jmDAO.update(job);
 		}
 		
@@ -288,6 +284,7 @@ public class JobManagerBO implements IJobManagerBO {
 	 * 保存或更新任务调度
 	 * 
 	 * @param jobDetail 任务调度信息
+	 * @param fired 在新建或更新任务时是否立即启动
 	 * @return 
 	 *
 	 * @变更记录 2017年12月28日 下午1:17:30 李瑞辉 创建
@@ -300,7 +297,7 @@ public class JobManagerBO implements IJobManagerBO {
 		 * 验证标准方式或普通方式
 		 */
 		/* 标准方式 即实现Job接口的类 */
-		if (jobDetail.getIsjobclass() == 1) {
+		if (jobDetail.getImpljob().equals("1")) {
 			boolean flag = false;
 			try {
 				Class<?> clazz = Class.forName(jobDetail.getJob_class_name());
@@ -314,9 +311,8 @@ public class JobManagerBO implements IJobManagerBO {
 			}				
 		} else { /* 普通方式 */
 			// 验证Bean和方法
-			if (SpringBeanUtil.containsBean(jobDetail.getJob_bean_name())) {
-			} else {
-				throw new WisoftException("错误");
+			if (!SpringBeanUtil.containsBean(jobDetail.getJob_bean_name())) {
+				return "系统不存在输入的Bean名";
 			}
 
 		}
@@ -329,13 +325,14 @@ public class JobManagerBO implements IJobManagerBO {
 		if (isExist)
 			return "已存在相同的任务名称和任务分组";
 		
-		if (null == jobDetail.getId() || jobDetail.getId().equals("")) {//新增方式
-			jobDetail.setJob_create_time(DateUtil.getFullDate()).setInstance_status(-1);			
+		if (null == jobDetail.getId() || jobDetail.getId().equals("")) {//新增方式					
 			this.jmDAO.save(jobDetail);
 		} else {//更新方式
-			if (jobDetail.getInstance_status() == 0) {//如果任务正在运行则需要暂停它
-				reScheduleJob(jobDetail);
-			}			
+			List<?> lt = jmDAO.findByNamedQuery("findJobCount", new Object[] { jobDetail.getJob_name() + "-J", jobDetail.getJob_group() + "-J"});
+			if (null != lt && lt.size() > 0) {//说明此Job已经存在相应的Trigger,需要重新设置
+				reScheduleJob(jobDetail);				
+			}
+			
 			this.jmDAO.update(jobDetail);
 		}		
 		
@@ -354,7 +351,7 @@ public class JobManagerBO implements IJobManagerBO {
 		TriggerKey triggerKey = TriggerKey.triggerKey(job.getJob_name()+"-T", job.getJob_group()+"-T");
 		Trigger trigger = null;
 		// 一次性调度触发器
-		if (job.getTrigger_type() == 0) {
+		if (job.getTrigger_type().equals("0")) {
 			Date dateTime = new Date();
 			if (!SSUtil.isEmpty(job.getExectime())) {
 				dateTime = DateUtil.string2datetime(job.getExectime());
@@ -406,7 +403,7 @@ public class JobManagerBO implements IJobManagerBO {
 
 		JobDetail jobDetail;
 		/* 标准方式的任务 即实现Job接口的类 */
-		if (1 == job.getIsjobclass()) {
+		if (job.getImpljob().equals("1")) {
 			jobDetail = JobBuilder.newJob((Class<? extends Job>) Class.forName(job.getJob_class_name())).withIdentity(job.getJob_name()+"-J", job.getJob_group()+"-J").storeDurably(true).build();
 		} else {/* 普通方式的任务 */
 			jobDetail = JobBuilder.newJob(SpringJobDetail.class).withIdentity(job.getJob_name()+"-J", job.getJob_group()+"-J").storeDurably(true).build();
@@ -416,7 +413,7 @@ public class JobManagerBO implements IJobManagerBO {
 		
 		Trigger trigger = null;
 		// 一次性调度触发器
-		if (job.getTrigger_type() == 0) {
+		if (job.getTrigger_type().equals("0")) {
 			Date dateTime = new Date();
 			if (!SSUtil.isEmpty(job.getExectime())) {
 				dateTime = DateUtil.string2datetime(job.getExectime());
@@ -449,11 +446,9 @@ public class JobManagerBO implements IJobManagerBO {
 			}
 
 		}
+		
+		scheduler.deleteJob(new JobKey(job.getJob_name(), job.getJob_group()));
 		scheduler.scheduleJob(jobDetail, trigger);
-
-		// 将Job的状态更新为【运行】状态
-		job.setInstance_status(0);
-		jmDAO.update(job);
 	}
 
 	/**
@@ -486,9 +481,7 @@ public class JobManagerBO implements IJobManagerBO {
 	 *
 	 */
 	private void updateJmJobDetail(JmJobDetail detail, int instance_status, int isexecuting, String exception) {
-		detail.setInstance_status(instance_status);
 		detail.setException_info(exception);
-		detail.setIsexecuting(isexecuting);
 		this.jmDAO.update(detail);
 	}
 	

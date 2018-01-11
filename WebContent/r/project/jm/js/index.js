@@ -43,6 +43,7 @@
 		}
 		// 启动任务
 		function startJob() {
+			debugger;
 			if (!jmGrid)
 				return;
 			var chks = jmGrid.getCheckedRows();
@@ -140,9 +141,7 @@
 		function initJmGrid() {
 			var jmGridEl = $('#jmGrid'), per = 10;// 默认每页显示 10 条数据
 			var args = {
-				'queryParm' : job_keyword,
-				'isexecuting' : isexecuting,
-				'instance_status' : instance_status
+				'keyword' : job_keyword
 			};
 			if (!jmGrid) {// 初始化
 				jmGrid = jmGridEl.initGrid({
@@ -153,7 +152,7 @@
 						field : 'job_name',title : '任务名称',width : '150px'}, {
 						field : 'job_full_bean',title : '作业类',showTip : true,width : '200px',render : class_renderCtrl}, {
 						field : 'description',title : '任务描述',showTip : true}, {
-						field : 'instance_status',title : '运行状态',align : 'center',width : '150px',render : instance_statusCtrl}, {
+						field : 'instance_status',title : '任务状态',align : 'center',width : '150px',render : instance_statusCtrl}, {
 						field : '',name : 'ctrl',title : '操作',width : '130px',align : 'center',render : jmGrid_renderCtrl
 					} ],
 					showno : true,
@@ -269,20 +268,23 @@
 				return '<div title="' + bean + '">' + bean + '</div>';
 			}
 		}
-		// 运行状态【-1未运行 0-正常运行 1-暂停/停止 2-异常】
+		// 运行状态
 		function instance_statusCtrl(val, row, i, datalist) {
 			switch (row.instance_status) {
-			case -1:
-				return '<div class="stat-bg-green">未运行</div>';
+			case 'WAITING':
+				return '<div class="stat-bg-green">等待中</div>';
 				break;
-			case 0:
-				return '<div class="stat-bg-green">正常运行</div>';
+			case 'ACQUIRED':
+				return '<div class="stat-bg-green">运行中</div>';
 				break;
-			case 1:
+			case 'COMPLETE':
+				return '<div class="stat-bg-green">已完成</div>';
+				break;
+			case 'PAUSED':
 				return '<div class="stat-bg-green">暂停</div>';
 				break;
-			case 2:
-				return '<div class="stat-bg-green">异常</div>';
+			default :
+				return '<div class="stat-bg-green">未运行</div>';
 				break;
 			}
 		}
@@ -303,21 +305,24 @@
 				showJobRemove(row.id, row.job_name);
 			}
 		}
-		// 行事件【-1未运行 0-正常运行 1-暂停/停止 2-异常】
+		// 行事件
 		function jmGrid_rowCtrl_click(e, row, i) {
 			switch (row.instance_status) {
-			case -1:
-				btnDisplay(0, 0, 1, 1, 1);
-				break;
-			case 0:
-				btnDisplay(0, 1, 0, 1, 0);
-				break;
-			case 1:
-				btnDisplay(0, 1, 1, 0, 1);
-				break;
-			case 2:
-				btnDisplay(0, 1, 1, 1, 1);
-				break;
+				case 'WAITING'://等待中
+					btnDisplay(0, 1, 0, 1, 0);
+					break;
+				case 'ACQUIRED'://运行中
+					btnDisplay(0, 1, 0, 1, 0);
+					break;
+				case 'COMPLETE'://已完成
+					btnDisplay(0, 1, 1, 1, 0);
+					break;
+				case 'PAUSED'://暂停
+					btnDisplay(0, 1, 1, 0, 0);
+					break;
+				default :
+					btnDisplay(0, 0, 1, 1, 1);
+					break;				
 			}
 		}		
 		function btnDisplay(nez, start, pause, resume, run) {// 1-隐藏 0-显示			
