@@ -1,1 +1,0 @@
-160526 resetSrcs(srcs):change pictures srcs
