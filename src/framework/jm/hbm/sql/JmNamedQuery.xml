@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	
+	<!-- 获取Job运行信息 -->
+	<sql-query name="findQrtz_triggers">			
+		<return-scalar column="job_name" type="string"/>
+		<return-scalar column="job_group" type="string"/>
+		<return-scalar column="trigger_state" type="string"/>
+		<return-scalar column="start_time" type="string"/>
+		<return-scalar column="end_time" type="string"/>
+		<return-scalar column="pre_fire_time" type="string"/>
+		<return-scalar column="next_fire_time" type="string"/>		
+			select t.job_name,t.job_group,t.trigger_state
+        	,decode(t.start_time,0,'无',TO_CHAR(t.start_time/( 1000*60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS')) AS start_time
+        	,decode(t.end_time,0,'无',TO_CHAR(t.end_time/( 1000*60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS')) AS end_time
+         	,decode(t.prev_fire_time,-1,'无',TO_CHAR(t.prev_fire_time/( 1000*60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS')) AS pre_fire_time
+         	,decode(t.next_fire_time,-1,'无',TO_CHAR(t.next_fire_time/( 1000*60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS')) AS next_fire_time     
+     		from qrtz_triggers t where t.job_name=:job_name and t.job_group=:job_group
+	</sql-query>
+	
+	<!-- 获取Job列表 -->
+	<sql-query name="findJobList">
+		<return-scalar column="id" type="string"/>
+		<return-scalar column="job_name" type="string"/>
+		<return-scalar column="job_group" type="string"/>
+		<return-scalar column="description" type="string"/>
+		<return-scalar column="job_class_name" type="string"/>
+		<return-scalar column="job_bean_name" type="string"/>
+		<return-scalar column="job_method_name" type="string"/>
+		<return-scalar column="cron_expression" type="string"/>
+		<return-scalar column="impljob" type="string"/>
+		<return-scalar column="trigger_type" type="string"/>
+		<return-scalar column="instance_status" type="string"/>
+		<return-scalar column="ordernum" type="int"/>
+		select j.id, j.job_name, j.job_group, j.description, j.job_class_name, j.job_bean_name, j.job_method_name,j.cron_expression,j.impljob,j.trigger_type,
+		nvl((select t.trigger_state from qrtz_triggers t where t.job_name=j.job_name||'-J' and t.job_group=j.job_group||'-J'),'') instance_status, j.ordernum ordernum
+ 		from jm_job_detail j  
+ 		where ( (:queryParm='-1' or job_name like :queryParm) 
+ 				or (:queryParm='-1' or job_group like :queryParm)
+ 		)
+ 		order by ordernum asc,instance_status desc, job_create_time desc
+	</sql-query>
+	
+	<!-- 根据查询出来的数量判断Job是否在'运行队列'中 -->
+	<sql-query name="findJobCount">
+		select count(*) from qrtz_triggers t where t.job_name = ? and t.job_group= ?
+	</sql-query>
+	
+	<!-- 查询未启动的任务列表 -->
+	<!-- 查询可启动的任务列表 -->
+	<sql-query name="findUnfiredJobList">
+		<return-scalar column="id" type="string"/>
+		<return-scalar column="job_name" type="string"/>
+		<return-scalar column="job_group" type="string"/>
+		<return-scalar column="description" type="string"/>
+		<return-scalar column="job_class_name" type="string"/>
+		<return-scalar column="job_bean_name" type="string"/>
+		<return-scalar column="job_method_name" type="string"/>
+		<return-scalar column="cron_expression" type="string"/>
+		<return-scalar column="impljob" type="string"/>
+		<return-scalar column="trigger_type" type="string"/>
+		<return-scalar column="instance_status" type="string"/>
+		<return-scalar column="ordernum" type="int"/>
+		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,
+		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
+		from jm_job_detail t where not exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') )
+	</sql-query>
+	
+	<!-- 查询可暂停的任务列表 -->
+	<sql-query name="findUnpauseJobList">
+		<return-scalar column="id" type="string"/>
+		<return-scalar column="job_name" type="string"/>
+		<return-scalar column="job_group" type="string"/>
+		<return-scalar column="description" type="string"/>
+		<return-scalar column="job_class_name" type="string"/>
+		<return-scalar column="job_bean_name" type="string"/>
+		<return-scalar column="job_method_name" type="string"/>
+		<return-scalar column="cron_expression" type="string"/>
+		<return-scalar column="impljob" type="string"/>
+		<return-scalar column="trigger_type" type="string"/>
+		<return-scalar column="instance_status" type="string"/>
+		<return-scalar column="ordernum" type="int"/>
+		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,
+		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
+		from jm_job_detail t where exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') and  
+		m.trigger_state != 'COMPLETE' and m.trigger_state != 'PAUSED' )
+	</sql-query>
+	
+	<!-- 查询可恢复的任务列表 -->
+	<sql-query name="findUnresumeJobList">
+		<return-scalar column="id" type="string"/>
+		<return-scalar column="job_name" type="string"/>
+		<return-scalar column="job_group" type="string"/>
+		<return-scalar column="description" type="string"/>
+		<return-scalar column="job_class_name" type="string"/>
+		<return-scalar column="job_bean_name" type="string"/>
+		<return-scalar column="job_method_name" type="string"/>
+		<return-scalar column="cron_expression" type="string"/>
+		<return-scalar column="impljob" type="string"/>
+		<return-scalar column="trigger_type" type="string"/>
+		<return-scalar column="instance_status" type="string"/>
+		<return-scalar column="ordernum" type="int"/>
+		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,
+		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
+		from jm_job_detail t where exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') and  
+		m.trigger_state = 'PAUSED' )
+	</sql-query>
+	
+	
+	
+	
+	
+</hibernate-mapping>
