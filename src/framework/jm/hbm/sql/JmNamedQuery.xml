@@ -30,17 +30,18 @@
 		<return-scalar column="job_bean_name" type="string"/>
 		<return-scalar column="job_method_name" type="string"/>
 		<return-scalar column="cron_expression" type="string"/>
+		<return-scalar column="exectime" type="string"/>
 		<return-scalar column="impljob" type="string"/>
 		<return-scalar column="trigger_type" type="string"/>
 		<return-scalar column="instance_status" type="string"/>
-		<return-scalar column="ordernum" type="int"/>
-		select j.id, j.job_name, j.job_group, j.description, j.job_class_name, j.job_bean_name, j.job_method_name,j.cron_expression,j.impljob,j.trigger_type,
-		nvl((select t.trigger_state from qrtz_triggers t where t.job_name=j.job_name||'-J' and t.job_group=j.job_group||'-J'),'') instance_status, j.ordernum ordernum
+		<return-scalar column="version" type="int"/>
+		select j.id, j.job_name, j.job_group, j.description, j.job_class_name, j.job_bean_name, j.job_method_name,j.cron_expression,j.exectime,j.impljob,j.trigger_type,
+		nvl((select t.trigger_state from qrtz_triggers t where t.job_name=j.job_name||'-J' and t.job_group=j.job_group||'-J'),'') instance_status, j.version
  		from jm_job_detail j  
  		where ( (:queryParm='-1' or job_name like :queryParm) 
  				or (:queryParm='-1' or job_group like :queryParm)
  		)
- 		order by ordernum asc,instance_status desc, job_create_time desc
+ 		order by job_create_time desc
 	</sql-query>
 	
 	<!-- 根据查询出来的数量判断Job是否在'运行队列'中 -->
@@ -59,11 +60,12 @@
 		<return-scalar column="job_bean_name" type="string"/>
 		<return-scalar column="job_method_name" type="string"/>
 		<return-scalar column="cron_expression" type="string"/>
+		<return-scalar column="exectime" type="string"/>
 		<return-scalar column="impljob" type="string"/>
 		<return-scalar column="trigger_type" type="string"/>
 		<return-scalar column="instance_status" type="string"/>
 		<return-scalar column="ordernum" type="int"/>
-		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,
+		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,t.exectime,
 		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
 		from jm_job_detail t where not exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') )
 	</sql-query>
@@ -78,11 +80,12 @@
 		<return-scalar column="job_bean_name" type="string"/>
 		<return-scalar column="job_method_name" type="string"/>
 		<return-scalar column="cron_expression" type="string"/>
+		<return-scalar column="exectime" type="string"/>
 		<return-scalar column="impljob" type="string"/>
 		<return-scalar column="trigger_type" type="string"/>
 		<return-scalar column="instance_status" type="string"/>
 		<return-scalar column="ordernum" type="int"/>
-		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,
+		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,t.exectime,
 		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
 		from jm_job_detail t where exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') and  
 		m.trigger_state != 'COMPLETE' and m.trigger_state != 'PAUSED' )
@@ -98,11 +101,12 @@
 		<return-scalar column="job_bean_name" type="string"/>
 		<return-scalar column="job_method_name" type="string"/>
 		<return-scalar column="cron_expression" type="string"/>
+		<return-scalar column="exectime" type="string"/>
 		<return-scalar column="impljob" type="string"/>
 		<return-scalar column="trigger_type" type="string"/>
 		<return-scalar column="instance_status" type="string"/>
 		<return-scalar column="ordernum" type="int"/>
-		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,
+		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,t.exectime,
 		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
 		from jm_job_detail t where exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') and  
 		m.trigger_state = 'PAUSED' )

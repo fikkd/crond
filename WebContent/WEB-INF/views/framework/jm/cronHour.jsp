@@ -3,7 +3,7 @@
 	<div class="container">
 		<div class="panel panel-border js-searbox">
 			<div class="panel-h panel-h-styrline">
-				<div class="panel-h-txt">分</div>
+				<div class="panel-h-txt">时</div>
 			</div>
 			<div class="panel-c">
 				<div style="height:330px;">

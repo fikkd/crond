@@ -1,5 +1,5 @@
 $(function() {
-	var time_limit, cronLayer, cronLayerS;
+	var time_limit, cronLayer;
 	/** 验证 **/
 	var vali = $('#groupform').initValidator({
 		rules : {
@@ -21,12 +21,14 @@ $(function() {
 			if (typeof job == 'string') {
 				$.showMsg(job);
 			} else {
-				$.fn.request(url, function(data) {
-					if (data) {
+				$.fn.request(url, function(data) {								
+					if (/[a-zA-Z0-9]+/.test(data)) {
 						$.showMsg('保存成功', function() {
 							parent.cusLayer['jm'](data, true);
 							parent.closeLayer['jm']();
 						});
+					} else {
+						$.showMsg(data);
 					}
 				}, job, true);
 			}
@@ -38,7 +40,6 @@ $(function() {
 			var job = setFormData($('#groupform').serializeObject());			
 			if (typeof job == 'string') {
 				$.showMsg(job);
-//				$.showAlert(job);
 			} else {
 				$.fn.request(url, function(data) {
 					if (data) {
@@ -61,14 +62,28 @@ $(function() {
 		// 新增时普通方式或标准方式的验证
 		if (isNew=='true' && isBean=='general') {//【1-是 0-否】
 			job.impljob='0';
-			var bname = job.job_bean_name;
+			var bname = $('input[name="job_bean_name"]').val();			
 			if (null == bname || bname.trim() == '') {
 				return "Bean的名称不能为空";
+			}			
+			if (bname.length < 3) {
+				return "Bean名称长度必须大于3";
+			}			
+			if (!/^[a-zA-Z]{3,}$/.test(bname)) {
+				return "Bean的名称只能包含字母";
 			}
-			var bmethod = job.job_method_name;
+						
+			var bmethod = $('input[name="job_method_name"]').val();			
 			if (null == bmethod || bmethod.trim() == '') {
 				return "方法名不能为空";
 			}
+			if (bmethod.length < 3) {
+				return "方法名长度必须大于3";
+			}
+			if (!/^[a-zA-Z]{3,}$/.test(bmethod)) {
+				return "方法名只能包含字母";
+			}
+			
 			job.job_class_name=null;
 		} else if (isNew=='true' && isBean=="standard"){
 			job.impljob='1';
@@ -85,9 +100,11 @@ $(function() {
 		var trigger_type = dispatch == 'one' ? '0' : '1';
 		job.trigger_type = trigger_type;
 		if (trigger_type == '1') {
-			if (null == job.cron_zh_cn || job.cron_zh_cn == '') {
+			var cron_zh_cn = $('div[name="cron_zh_cn"]').html();	
+			if (null == cron_zh_cn || cron_zh_cn == '') {
 				return "周期性计划任务设置周期不能为空";
 			}
+			job.cron_zh_cn=cron_zh_cn;
 			job.starttime=$('div[name="stime"]').html();			
 			job.endtime=$('div[name="etime"]').html();
 			job.exectime='';
@@ -118,29 +135,16 @@ $(function() {
 	}
 	
 	/** 精准设置 */
-	function showJobCron() {
+	function fShowCron() {
 		var url = BASEPATH + "jm/toCron.do";
 		cronLayer.show({
             data:{
             	cron_expression : $('[name="cron_expression"]').val(),
-            	cron_zh_cn : $('[name="cron_zh_cn"]').val()
+            	cron_zh_cn : $('[name="cron_zh_cn"]').html()
             }
         });
 	}
-	/** 常规设置 */
-	function showJobCronS() {
-		var url = BASEPATH + "jm/toCron.do";
-		if (jobCronInfo) {
-			url += "?cron=" + jobCronInfo.replace(/\#/g, '%23') + "&starttime=" + startsj + "&endtime=" + endsj;
-		}
-		cronLayerS.show({
-			data:{
-            	cron_expression : cron_expression,
-            	cron_zh_cn : cron_zh_cn
-            }
-        });
-	}
-	
+
 	/** 改变普通方式启用状态 */
 	function changeCType() {
 		var isBean = $('input[data-val="ctype"][value="general"]').prop('checked');
@@ -152,11 +156,11 @@ $(function() {
 	/** 倒计时执行 */
 	function changeCountDown() {
 		var isCountDown = $('#countDown').prop('checked');
-		if (isCountDown) {
+		if (isCountDown && (isNew=='true' || isEdit=='true')) {
 			$('tr[data-countdown="countdown"]').find('>td input,>td select').removeAttr("readonly");
 			$('div[name="exectime"]').off("click");
 			$('#time_unit').attr("disabled",false);
-		} else {
+		} else if (isNew=='true' || isEdit=='true') {
 			$('tr[data-countdown="countdown"]').find('>td input,>td select').attr("readonly","readonly");
 			$('div[name="exectime"]').on("click", fShowDate);
 			$('#time_unit').attr("disabled","disabled");
@@ -168,17 +172,15 @@ $(function() {
 	function changeDispatch() {
 		var val = $('input[data-val="dispatch"]:checked').val();
 		var comEl = $('tr[data-dispatch="com"]'), oneEl = $('tr[data-dispatch="one"]');
-		if (val == 'one') {// 一次性
-			$('#changeJobCron').off('click');
-			$('#changeJobCronS').off('click');
+		if (val == 'one' && (isNew=='true' || isEdit=='true')) {// 一次性
+			$('div[name="cron_zh_cn"]').off('click');
 			$('div[name="stime"]').off('click');
 			$('div[name="etime"]').off('click');
 			$('#countDown').show();			
 			$('#countDown').on('change',changeCountDown);
 			changeCountDown();		
-		} else {// 周期性
-			$('#changeJobCron').on("click",showJobCron);
-			$('#changeJobCronS').on("click",showJobCronS);
+		} else if (val == 'com' && (isNew=='true' || isEdit=='true')) {// 周期性
+			$('div[name="cron_zh_cn"]').on('click',fShowCron);
 			$('div[name="stime"]').on("click",fShowDate);
 			$('div[name="etime"]').on("click",fShowDate);
 			$('div[name="exectime"]').off('click');
@@ -193,10 +195,8 @@ $(function() {
 	function cronLayer_cb(args) {
 		var arr = args.split('|');
 		$('[name="cron_expression"]').val(cron_expression=arr[0].trim());
-		$('[name="cron_zh_cn"]').val(cron_zh_cn=arr[1]);
-	}
-	/** 常规设置的回调 */
-	function cronLayerS_cb(args) {
+		$('[name="cron_zh_cn"]').html(cron_zh_cn=arr[1]);
+		$('[name="cron_zh_cn"]').attr("title",cron_zh_cn=arr[1]);		
 	}
 	
 	var fShowDate = function(e) {
@@ -207,14 +207,14 @@ $(function() {
 	};
 
 	var fDelDate = function(e) {
-		
+		$(this).prev().html('');		
 	}
 	
 	
 	/** ============================================================= **/
 	
 	/** 底部按钮操作 */
-	$('.pageBot_in').on('click', 'button', bottomHandler);
+	$('.js-fbtns').on('click', 'button', bottomHandler);
 	
 	// 一次性调度的数字框初始化
 	time_limit = $('#time_limit').initSelNum({
@@ -224,7 +224,6 @@ $(function() {
 	});
 	if (isNew=='true') {
 		$('input[data-val="ctype"][value="general"]').prop('checked', true);
-//		$('#countDown').prop('checked', true);
 	}
 	$('input[data-val="ctype"]').change(changeCType);
 	changeCType();
@@ -244,27 +243,17 @@ $(function() {
 	
 
 	var cron_expression = $('[name="cron_expression"]').val();
-	var cron_zh_cn = $('[name="cron_zh_cn"]').val();
+	var cron_zh_cn = $('[name="cron_zh_cn"]').html();
 	
 	cronLayer = $.initWiLayer({
 		name : 'cronLayer',
 		layerOpts : {
 			content : BASEPATH + "jm/toCron.do",
-			title : '精准频率',
-			shade : [ 0 ],
-			area : [ '600px', '530px' ]
+			title : ['周期设置', 'font-size:16px;color:#00F;background-color:#C0C0C0;'],
+			shade : 0.3,
+			area : [ '650px', '580px' ]
 		},
 		callback : cronLayer_cb
-	});
-	cronLayerS = $.initWiLayer({
-		name : 'cronLayerS',
-		layerOpts : {
-			content : BASEPATH + "jm/toCron.do",
-			title : '常规频率',
-			shade : [ 0 ],
-			area : [ '600px', '530px' ]
-		},
-		callback : cronLayerS_cb
 	});
 	
 	$('.txt-del').on('click',fDelDate);

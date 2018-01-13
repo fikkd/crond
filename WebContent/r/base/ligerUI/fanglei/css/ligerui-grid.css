@@ -1,0 +1,90 @@
+﻿/* -----------------------
+   * 表格 *
+* ----------------------- */
+
+.l-grid-mask{
+	position:absolute;left:0;top:0;width:100%;height:100%; 
+	font-size:1px; *zoom:1;overflow:hidden; display:none;z-index: 9000;
+}
+
+.l-panel-btn
+{
+    display:block; 
+     height:24px; overflow:hidden; line-height:24px; position:relative; 
+     padding-left:7px; padding-right:7px; cursor:pointer;
+   
+     text-align:center;color: #2C4D79;  text-decoration:none; cursor:pointer;
+}
+.l-panel-btn-over,.l-panel-btn-selected{background: #E0EDFF url(../images/panel/panel-btn.gif) repeat-x; color:#45280b}
+.l-panel-btn-l
+{
+    position:absolute; width:3px; left:0px; top:0px;height:24px;
+    background: #E0EDFF url(../images/panel/panel-btn-l.gif) no-repeat;
+}
+.l-panel-btn-r
+{position:absolute; width:3px; right:0px; top:0px;height:24px;
+    background: #E0EDFF url(../images/panel/panel-btn-r.gif) no-repeat;
+}
+.l-panel-btn-l, .l-panel-btn-r {
+    height:24px;
+}
+
+.l-grid-header
+{
+    border-bottom:1px solid #A3C0E8;
+   height:22px; line-height:22px;background:#E2F0FF url('../images/grid/header-bg.gif') repeat-x left bottom; overflow:hidden; width:100%;
+   font-weight:bold;
+   color:#0b3d67;
+   }
+/**  这个样式的属性被情掉了 **/
+.l-grid-body {
+    /*position: relative; width:100%;*/
+    /*top: 0px;*/
+    /*left: 0px; overflow: auto;*/
+}
+
+.l-grid-body-table tr.l-checked td
+{
+    background:#ffdfa1
+}
+
+.l-selected .l-grid-row-cell,.l-selected {
+    background:#ffdfa1
+}
+
+.l-panel-bar
+{
+    height:32px;background:#C9DFFF url('../images/panel/bar-bg.gif') repeat-x left bottom;overflow:hidden;
+    border-top:1px solid #84A0C4;
+	margin-top:6px;
+}
+
+.l-panel-bbar-inner
+{
+    margin-top: 5px;
+    padding-left: -2px;
+    width:100%;  position:relative; min-width:530px;_width:530px;
+}
+
+.l-menubar
+{
+    background: url('../images/panel/panel-menu.gif') repeat-x; height:24px; border:1px solid #ADBED6;border-top:0px solid #EFF7F7;
+    
+}
+
+.l-toolbar
+{    
+    background:#CEDFEF  url('../images/panel/panel-toolbar.gif') repeat-x; height:30px; 
+    border:0px solid #9CBAE7;  border-bottom:1px solid #9CBAE7;
+	background-position:0px -1px;
+	padding-top:6px;
+}
+.l-toolbar-item .l-icon,.l-toolbar-item img{ position:absolute; left:5px; top:4px; display:block;}
+
+.l-toolbar-item-hasicon{ padding-left:25px;}
+
+.l-grid-row-alt .l-grid-row-cell-rownumbers,.l-selected .l-grid-row-cell-rownumbers,.l-grid-row-over .l-grid-row-cell-rownumbers,.l-grid-row-cell-rownumbers
+
+{	background:#E0ECFF;
+	height:22px; line-height:22px;background:#E2F0FF url('../images/grid/header-bg.gif') repeat-x left bottom; overflow:hidden; width:100%;
+}

@@ -1,0 +1,20 @@
+/* session 过期 */
+body{ background-color:#1d8bd8;}
+.session-box{
+    position:absolute;
+    width: 600px; height:400px;
+    top:50%; left:50%;
+    margin-top:-200px; margin-left:-300px;
+    background: url("../images/sessionTimeout/sessionbox.jpg") no-repeat;
+}
+.session-btn{
+    margin: 290px auto 0;
+    display: block;
+    width:100px;
+    height:30px; line-height:28px;
+    color:#003366;border:#266296 1px solid;background-color:#a0ccff;
+    text-align:center;
+    box-shadow:0 2px 2px #999;
+    border-radius:4px;
+}
+.session-btn:hover {color: #fff;border: #266296 1px solid;background-color:#266296;}

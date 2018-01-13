@@ -314,16 +314,16 @@ public class JobManagerBO implements IJobManagerBO {
 			jobDetail.setTime_unit(0);
 		}
 		
-		
-		if (null == jobDetail.getId() || jobDetail.getId().equals("")) {//新增方式					
+		if (null == jobDetail.getId() || jobDetail.getId().equals("")) {//新增方式			
+			jobDetail.setJob_create_time(DateUtil.getFullDate());			
 			this.jmDAO.save(jobDetail);
 		} else {//更新方式
+			this.jmDAO.update(jobDetail);
+			
 			List<?> lt = jmDAO.findByNamedQuery("findJobCount", new Object[] { jobDetail.getJob_name() + "-J", jobDetail.getJob_group() + "-J"});
 			if (null != lt && lt.size() > 0) {//说明此Job已经在'任务队列'中,需要重新设置Trigger
 				reScheduleJob(jobDetail);				
-			}
-			
-			this.jmDAO.update(jobDetail);
+			}			
 		}		
 		
 		if (fired.equals("1")) {

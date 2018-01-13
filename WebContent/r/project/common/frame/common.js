@@ -3650,6 +3650,71 @@
         fInit();
         return api;
     };
+    //container容器左右拖拽左右滑动改变宽度组件
+    _WI.drag = function(el,opts){
+        opts = $.extend({
+            leftMinWidth:200 //左侧容器最小宽度
+        }, opts);
+        var nElW,//el的容器宽度
+            nMaxDragDisX,//最大的移动距离
+            nLineOffsetL,//滑动线相对于文档的偏移
+            nStarX,//滑动线鼠标点击的起始位置
+            nLeftMinWidth,//左侧容器的最小宽
+            jqDocument,//文档jquery对象
+            jqRight,//容器右侧jquery对象
+            jqLeft,//容器左侧jquery对象
+            jqLine,//滑动线jquery对象
+            dLine;//滑动线dom对象
+        //document鼠标移动的事件
+        var fDomMousemove = function(e){
+            var curDis = nLineOffsetL + (e.pageX - nStarX);//滑动线滑动的距离文档的距离
+            curDis < nLeftMinWidth && ( curDis = nLeftMinWidth);
+            curDis > nMaxDragDisX && ( curDis = nMaxDragDisX);
+            jqLine.css('left', curDis); //更新滑动线的left位置
+            jqLeft.css('width', curDis); //更新左侧容器的宽
+            jqRight.css({
+                'left':curDis,
+                'marginLeft':'4px' //container-l与container-r两个容器直接有4px的间距
+            });//更新右侧容器left位置
+            return false;
+        };
+        //document鼠标抬起的事件
+        var fDomMouseup = function(e){
+            jqDocument.off('mousemove.dragline')
+                      .off('mouseup.dragline');
+            dLine.releaseCapture && dLine.releaseCapture();
+            return false;
+        };
+        //滑动界限的鼠标按下的事件
+        var fLindeMouseDown = function(e){
+            dLine = jqLine[0]; //滑动线的dom
+            nStarX = e.pageX; //滑动线鼠标点击的起始位置
+            nLineOffsetL = jqLine.offset().left;
+            dLine.setCapture && dLine.setCapture();
+            jqDocument.off('mousemove.dragline')
+                      .on('mousemove.dragline', fDomMousemove)//document鼠标移动的事件
+                      .off('mouseup.dragline')
+                      .on('mouseup.dragline', fDomMouseup);//document鼠标抬起的事件
+            return false;
+        };
+
+        var fInit = function(){
+            el.addClass('drag-container');
+            jqLine = $('<div class="drag-line"></div>');
+            jqRight = el.find('.container-r');
+            jqLeft = el.find('.container-l');
+            jqDocument = $(document);
+            nLeftMinWidth = opts.leftMinWidth;
+            jqLeft.css('min-width',nLeftMinWidth);
+            jqLine.css('left',jqLeft.outerWidth());//设置滑动线的left位置
+            el.append(jqLine);
+            nElW = el.outerWidth();
+            nMaxDragDisX = nElW - jqLine.width();
+            jqLine.off('mousedown.dragline')
+                  .on('mousedown.dragline', fLindeMouseDown);//滑动线的鼠标按下的事件
+        };
+        fInit();
+    };
 
     /* ===== 主体实现 ===== */
     window.BASEPATH= $.getBasePath();

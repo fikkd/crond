@@ -1,0 +1,102 @@
+/* 登录 */
+.wrap{
+    min-height:600px;
+    color: #666;
+    background:#0c7dcb;
+}
+.login-cont{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:820px;
+    height:300px;
+    margin-left:-410px;
+    margin-top:-130px;
+    background:url("../images/login/login-sub.png") no-repeat left center;
+}
+.login-head,
+.login-foot{
+    position:absolute;
+    left:0;
+    right:0;
+    text-align:center;
+    background:#fff;
+}
+.login-head{
+    top:0;
+    height:120px;
+    line-height:120px;
+}
+.login-foot{
+    bottom:0;
+    height:80px;
+    line-height:80px;
+}
+/* login-head */
+.login-head-in{
+    width:750px;
+    margin:0 auto;
+    height:100%;
+    background:url("../images/login/login-head.png") no-repeat left 45px;
+}
+/* login-foot */
+.login-foot>a{ color:#333;}
+.login-foot>a:hover{ color:#4385C1;}
+/* login-cont */
+.login-cont-in{
+    position:absolute;
+    top:0;
+    right:0;
+    bottom:0;
+    width:320px;
+    background:#fff;
+}
+.login-cont-h{
+    line-height: 36px;
+    font-size: 20px;
+    font-family: "\9ED1\4F53",arial, verdana, sans-serif;
+    text-align: center;
+    padding-top: 25px;
+}
+.login-cont-c{ padding: 10px 28px;}
+.login-cont-c .blank-t{ margin-top:14px;}
+.loginipt{
+    position:relative;
+    width:100%;
+}
+.loginipt-txt{
+    padding: 0 5px 0 43px;
+    height:38px;
+    border:solid 1px transparent;
+    width:100%;
+    line-height:36px;
+    background:#daeaf9;
+}
+.loginipt-ico{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    width:38px;
+    background:no-repeat center;
+}
+.loginipt-ico-user{ background-image:url("../images/login/login-ico-user.png");}
+.loginipt-ico-pwd{ background-image:url("../images/login/login-ico-pwd.png");}
+.loginaddon{ font-size:12px;}
+.login-cont-go{
+    margin-top:30px;
+    width:100%;
+    height:38px;
+    line-height:36px;
+    color: #fff;
+    font-size: 18px;
+    letter-spacing: 15px;
+    background-color:#47bdeb;
+    border-color: #47bdeb;
+    text-shadow:1px 1px 1px rgba(0,0,0,.3);
+}
+.login-cont-go:hover{
+    color: #fff;
+    background-color:#3bbaeb;
+    border-color: #3bbaeb;
+}

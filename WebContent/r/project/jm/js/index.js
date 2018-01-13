@@ -1,11 +1,6 @@
 (function($) {
 	$(function() {
 		var jmGrid = undefined;
-		var job_keyword = undefined;
-		var headDp;
-		var headDpEl;
-		var headDp_ins;
-		var headDpEl_ins;
 		
 		var jmLayer = $.initCusLayer(jmLayer_cb, 'jm');
 		// 变更时执行的回调函数
@@ -14,44 +9,53 @@
 		}
 		// 任务调度信息页面展示
 		function showJobDetail(jobID, isView) {
-			var url = BASEPATH + "jm/toJmEdit.do", title;
+			var url = BASEPATH + "jm/toJmEdit.do", title;			
 			if (jobID && !isView) {
-				url += "?id=" + jobID+"&isEdit=true";
-				title = '编辑任务调度';
+				url += "?id=" + jobID+"&isEdit=true";				
+				title = ['编辑任务调度', 'font-size:16px;color:#00F;background-color:#C0C0C0;'];
+				jmLayer.show({
+					content : url,
+					title : title,
+					shade : [ 0 ],				
+					area : [ '650px', '580px' ]
+				});
 			} else if (jobID && isView) {
 				url += "?id=" + jobID + "&isView=true";
-				title = '查看任务调度';
+				title = ['查看任务调度', 'font-size:16px;color:#00F;background-color:#C0C0C0;'];
+				jmLayer.show({
+					content : url,
+					title : title,
+					shade : [ 0 ],				
+					area : [ '650px', '370px' ]
+				});
 			} else {
 				url += "?isNew=true";
-				title = '新建任务调度';
-			}
-			jmLayer.show({
-				content : url,
-				title : title,
-				shade : [ 0 ],
-				area : [ '650px', '570px' ]
-			});
+				title = ['新建任务调度', 'font-size:16px;color:#00F;background-color:#C0C0C0;'];
+				jmLayer.show({
+					content : url,
+					title : title,
+					shade : [ 0 ],				
+					area : [ '650px', '580px' ]
+				});
+			}			
 		}
 
-		
+		// 新建任务
 		function newJob() {
 			showJobDetail();
 		}
 		// 启动任务
 		function startJob() {
-			if($(this).hasClass("disabled")) return;
-			
+			if($(this).hasClass("disabled")) return;			
 			if (!jmGrid)
 				return;
 			var chks = jmGrid.getCheckedRows();
 			if (chks.length && chks.length == 1) {
 				$.fn.request(BASEPATH + 'jm/startJob.json?jobId=' + chks[0].id+'&all=no use',
-					function() {
-						layer.msg('任务启动成功');
-						jmGrid.resetData();
-					}, {}, true);
-				
-				initJmGrid();
+					function() {						
+						$.showMsg('任务启动成功');
+						initJmGrid();
+					}, {}, true);				
 			} else {
 				$.showValiTip(this, '请选择一个任务');
 			}
@@ -60,11 +64,9 @@
 			if($(this).hasClass("disabled")) return;
 			$.fn.request(BASEPATH + 'jm/startJob.json?all=all',
 				function() {
-					layer.msg('任务启动成功');
-					jmGrid.resetData();
+					$.showMsg('任务启动成功');
+					initJmGrid();		
 				}, {}, true);
-			
-			initJmGrid();
 		}
 		// 停止任务
 		function stopJob() {
@@ -74,11 +76,9 @@
 			var chks = jmGrid.getCheckedRows();
 			if (chks.length && chks.length == 1) {
 				$.fn.request(BASEPATH + 'jm/stopJob.json?jobId=' + chks[0].id+'&all=no use', function() {
-					layer.msg('任务已停止');
-					jmGrid.resetData();
+					$.showMsg('任务已停止');
+					initJmGrid();					
 				}, {}, true);
-				
-				initJmGrid();
 			} else {
 				$.showValiTip(this, '请选择一个任务');
 			}
@@ -86,11 +86,9 @@
 		function stopJobAll() {
 			if($(this).hasClass("disabled")) return;
 			$.fn.request(BASEPATH + 'jm/stopJob.json?all=all', function() {
-				layer.msg('任务已停止');
-				jmGrid.resetData();
+				$.showMsg('任务已停止');
+				initJmGrid();			
 			}, {}, true);
-			
-			initJmGrid();
 		}
 		// 恢复任务
 		function resumeJob() {
@@ -100,11 +98,9 @@
 			var chks = jmGrid.getCheckedRows();
 			if (chks.length && chks.length == 1) {
 				$.fn.request(BASEPATH + 'jm/resumeJob.json?jobId=' + chks[0].id+'&all=no use', function() {
-					layer.msg('任务已恢复');
-					jmGrid.resetData();
+					$.showMsg('任务已恢复');
+					initJmGrid();			
 				}, {}, true);
-				
-				initJmGrid();
 			} else {
 				$.showValiTip(this, '请选择一个任务');
 			}
@@ -112,11 +108,9 @@
 		function resumeJobAll() {
 			if($(this).hasClass("disabled")) return;
 			$.fn.request(BASEPATH + 'jm/resumeJob.json?all=all', function() {
-				layer.msg('任务已恢复');
-				jmGrid.resetData();
+				$.showMsg('任务已恢复');
+				initJmGrid();						
 			}, {}, true);
-			
-			initJmGrid();
 		}
 		// 运行情况
 		function runJob() {
@@ -127,34 +121,32 @@
 			if (chks.length && chks.length == 1) {
 				var group = chks[0].job_group;
 				var name = chks[0].job_name;
-				jmck(group, name);
-								
+				jmck(group, name);								
 			} else {
 				$.showValiTip(this, '请选择一个任务');
 			}
 		}
 		function jmck(group, name) {
-			var url = BASEPATH + "jm/toJmRuningtimePage.do?job_group=" + group
-					+ "&job_name=" + name;
+			var url = BASEPATH + "jm/toJmRuningtimePage.do?job_group=" + group + "&job_name=" + name;
 			jmLayer.show({
 				content : url,
 				title : '运行情况',
 				shade : [ 0 ],
-				area : [ '650px', '200px' ]
+				area : [ '650px', '230px' ]
 			});
 		}
 
 		// 关键字查询
 		$("#queryJobBtn").click(queryJob);
 		function queryJob() {
-			job_keyword = $('#queryJobTxt').val().trim();
-			initJmGrid();
+			var job_keyword = $('#queryJobTxt').val().trim();
+			initJmGrid(job_keyword);
 		}
 
 		/**
 		 * 初始化表格
 		 */
-		function initJmGrid() {		
+		function initJmGrid(job_keyword) {		
 			
 			$("#startJobBtn").removeClass('disabled');
 			$("#startJobBtnAll").removeClass('disabled');
@@ -177,7 +169,7 @@
 					         { field : 'job_group',title : '分组名称',width : '150px'}, 
 					         { field : 'job_name',title : '任务名称',width : '150px'}, 
 					         { field : 'job_full_bean',title : '作业类',showTip : true,width : '200px',render : class_renderCtrl}, 
-					         { field : 'trigger_type',title : '任务类型',showTip : true,align : 'center',render : type_renderCtrl}, 
+					         { field : 'trigger_type',title : '任务类型',align : 'center',render : type_renderCtrl}, 
 					         { field : 'instance_status',title : '任务状态',align : 'center',width : '150px',render : instance_statusCtrl}, 
 					         { field : '',name : 'ctrl',title : '操作',width : '130px',align : 'center',render : jmGrid_renderCtrl }
 					],
@@ -245,9 +237,10 @@
 		}
 		// 操作单元格 render
 		function jmGrid_renderCtrl(val, row, i, datalist) {
-			return '<span class="fa fa-search" data-val="view" title="查看"></span>'
-					+ '<span class="fa fa-edit" data-val="edit" title="修改"></span>'
-					+ '<span class="fa fa-remove" data-val="remove" title="删除"></span>';
+			return '<button class="btn gbtn btn-primary" type="button" data-val="view">查看</button>' +
+			'<button class="btn gbtn btn-primary" type="button" data-val="edit">修改</button>' +
+            '<button class="gico gico-del" type="button" data-val="remove"></button>';
+			
 		}
 		// 操作单元格单击事件
 		function jmGrid_cellCtrl_click(e, val, row, i) {
@@ -288,52 +281,38 @@
 			if (start==0) {
 				$("#startJobBtn").removeClass('disabled');
 				$("#startJobBtnAll").removeClass('disabled');			
-/*				$('#startJobBtn').click(startJob);// 启动任务
-				$('#startJobBtnAll').click(startJobAll);*/
 			} else if (start==1) {
 				$("#startJobBtn").addClass('disabled');				
 				$("#startJobBtnAll").addClass('disabled');				
-/*				$('#startJobBtn').unbind();
-				$('#startJobBtnAll').unbind();*/
 			}
 			if (pause==0) {
 				$("#pauseJobBtn").removeClass('disabled');
-				$("#pauseJobBtnAll").removeClass('disabled');
-				
+				$("#pauseJobBtnAll").removeClass('disabled');				
 			} else if (pause==1) {
 				$("#pauseJobBtn").addClass('disabled');				
 				$("#pauseJobBtnAll").addClass('disabled');				
-/*				$('#pauseJobBtn').unbind();
-				$('#pauseJobBtnAll').unbind();*/
 			}
 			if (resume==0) {
 				$("#resumeJobBtn").removeClass('disabled');
-				$("#resumeJobBtnAll").removeClass('disabled');
-				
+				$("#resumeJobBtnAll").removeClass('disabled');				
 			} else if (resume==1) {
 				$("#resumeJobBtn").addClass('disabled');				
 				$("#resumeJobBtnAll").addClass('disabled');				
-/*				$('#resumeJobBtn').unbind();
-				$('#resumeJobBtnAll').unbind();*/
 			}
 			if (run==0) {
-				$("#runJobBtn").removeClass('disabled');
-				
+				$("#runJobBtn").removeClass('disabled');				
 			} else if (run==1) {
 				$("#runJobBtn").addClass('disabled');				
-/*				$('#runJobBtn').unbind();*/
 			}
 		}
 		
 		// 删除任务
 		function showJobRemove(id, name) {
-			layer.confirm('确定删除', {
-				btn : [ '确定', '取消' ]
-			}, function(index) {
+			$.showConfirm("确定删除",function(){
 				var url = BASEPATH + 'jm/deletejob.json';
 				$.fn.request(url, function() {
-					jmGrid.resetData();
-					layer.close(index);
+					$.showMsg("删除成功")									
+					initJmGrid();
 				}, {
 					"id" : id
 				}, true);

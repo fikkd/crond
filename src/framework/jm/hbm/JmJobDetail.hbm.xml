@@ -3,67 +3,68 @@
    "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.wisoft.framework.jm.entity" auto-import="true">
-   <class name="JmJobDetail" table="Jm_Job_Detail">
-      <id name="id">
-         <column name="id" not-null="true" length="32"/>
-      <generator class="uuid.hex"> </generator>
-      </id>
-      <property name="job_name" lazy="false">
-         <column name="job_name" not-null="true" length="200"/>
-      </property>
-      <property name="job_group" lazy="false">
-         <column name="job_group" not-null="true" length="200"/>
-      </property>
-      <property name="description" lazy="false">
-         <column name="description" length="500"/>
-      </property>
-      <property name="impljob" lazy="false">
-         <column name="impljob" length="2"/>
-      </property>
-      <property name="job_class_name" lazy="false">
-         <column name="job_class_name" length="250"/>
-      </property>
-      <property name="job_bean_name" lazy="false">
-         <column name="job_bean_name" length="50"/>
-      </property>
-      <property name="job_method_name" lazy="false">
-         <column name="job_method_name" length="50"/>
-      </property>
-      <property name="job_create_time" lazy="false">
-         <column name="job_create_time" length="20"/>
-      </property>
-      <property name="trigger_type" lazy="false">
-         <column name="trigger_type" length="2"/>
-      </property>
-      <property name="time_limit" type="java.lang.Integer" lazy="false">
-         <column name="time_limit"/>
-      </property>
-      <property name="time_unit" type="java.lang.Integer" lazy="false">
-         <column name="time_unit"/>
-      </property>
-      <property name="exectime" lazy="false">
-         <column name="exectime" length="20"/>
-      </property>
-      <property name="cron_expression" lazy="false">
-         <column name="cron_expression" length="120"/>
-      </property>
-      <property name="cron_zh_cn" lazy="false">
-         <column name="cron_zh_cn" length="200"/>
-      </property>
-      <property name="starttime" lazy="false">
-         <column name="starttime" length="20"/>
-      </property>
-      <property name="endtime" lazy="false">
-         <column name="endtime" length="20"/>
-      </property>
-      <property name="instance_status" lazy="false">
-         <column name="instance_status" length="20"/>
-      </property>
-      <property name="exception_info" lazy="false">
-         <column name="exception_info"/>
-      </property>
-      <property name="ordernum" type="java.lang.Integer" lazy="false">
-         <column name="ordernum"/>
-      </property>
-   </class>
+	<class name="JmJobDetail" table="Jm_Job_Detail">
+		<id name="id">
+			<column name="id" not-null="true" length="32" />
+			<generator class="uuid.hex">
+			</generator>
+		</id>
+		<version name="version" type="int" >
+			<column name="version"></column>
+		</version>
+		<property name="job_name" lazy="false">
+			<column name="job_name" not-null="true" length="200" />
+		</property>
+		<property name="job_group" lazy="false">
+			<column name="job_group" not-null="true" length="200" />
+		</property>
+		<property name="description" lazy="false">
+			<column name="description" length="500" />
+		</property>
+		<property name="impljob" lazy="false">
+			<column name="impljob" length="2" />
+		</property>
+		<property name="job_class_name" lazy="false">
+			<column name="job_class_name" length="250" />
+		</property>
+		<property name="job_bean_name" lazy="false">
+			<column name="job_bean_name" length="50" />
+		</property>
+		<property name="job_method_name" lazy="false">
+			<column name="job_method_name" length="50" />
+		</property>
+		<property name="job_create_time" lazy="false">
+			<column name="job_create_time" length="20" />
+		</property>
+		<property name="trigger_type" lazy="false">
+			<column name="trigger_type" length="2" />
+		</property>
+		<property name="time_limit" type="java.lang.Integer" lazy="false">
+			<column name="time_limit" />
+		</property>
+		<property name="time_unit" type="java.lang.Integer" lazy="false">
+			<column name="time_unit" />
+		</property>
+		<property name="exectime" lazy="false">
+			<column name="exectime" length="20" />
+		</property>
+		<property name="cron_expression" lazy="false">
+			<column name="cron_expression" length="120" />
+		</property>
+		<property name="cron_zh_cn" lazy="false">
+			<column name="cron_zh_cn" length="200" />
+		</property>
+		<property name="starttime" lazy="false">
+			<column name="starttime" length="20" />
+		</property>
+		<property name="endtime" lazy="false">
+			<column name="endtime" length="20" />
+		</property>
+		<property name="instance_status" lazy="false">
+			<column name="instance_status" length="20" />
+		</property>
+		<property name="exception_info" lazy="false">
+			<column name="exception_info" />
+		</property>
+	</class>
 </hibernate-mapping>

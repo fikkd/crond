@@ -2,6 +2,7 @@ package com.wisoft.framework.jm.controller;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -159,16 +160,17 @@ public class JMController {
 	@RequestMapping("/saveJob")
 	public AjaxResult saveJob(JmJobDetail jopbDetail, String fired) {
 		AjaxResult ar = new AjaxResult(false);
-		try {			
+		try {
 			String data = this.jobManagerBO.saveOrUpdateJob(jopbDetail, fired);
-			if (data.matches(".*[\u4e00-\u9fa5].*")) {// 返回值中包含中文说明保存或更新时存在问题. 之所以这么判断, 那是因为BO层在正常的情况下返回值是不包含中文的
-				ar.setMsg(data);
-			} else {
-				ar.setData(data);
-				ar.setSuccess(true);				
-			}			
+			ar.setData(data);
+			ar.setSuccess(true);		
 		} catch (Exception e) {
-			logger.error(this, e);			
+			if(e instanceof HibernateOptimisticLockingFailureException) {
+                ar.setData("刚被他人修改请重新加载");
+                ar.setSuccess(true);
+            } else {
+            	logger.error(this, e);
+            }
 		}
 		return ar;
 	}
@@ -216,7 +218,7 @@ public class JMController {
 			this.jobManagerBO.startJob(jobId, all);
 			ar.setSuccess(true);
 		} catch (Exception e) {
-			ar.setMsg("设置有误");
+			ar.setMsg("启动失败");
 			logger.error(this, e);
 		}
 		return ar;
