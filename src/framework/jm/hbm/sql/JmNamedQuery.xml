@@ -64,9 +64,9 @@
 		<return-scalar column="impljob" type="string"/>
 		<return-scalar column="trigger_type" type="string"/>
 		<return-scalar column="instance_status" type="string"/>
-		<return-scalar column="ordernum" type="int"/>
+		<return-scalar column="version" type="int"/>
 		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,t.exectime,
-		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
+		t.impljob,t.trigger_type,t.instance_status,t.version 
 		from jm_job_detail t where not exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') )
 	</sql-query>
 	
@@ -84,9 +84,9 @@
 		<return-scalar column="impljob" type="string"/>
 		<return-scalar column="trigger_type" type="string"/>
 		<return-scalar column="instance_status" type="string"/>
-		<return-scalar column="ordernum" type="int"/>
+		<return-scalar column="version" type="int"/>
 		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,t.exectime,
-		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
+		t.impljob,t.trigger_type,t.instance_status,t.version 
 		from jm_job_detail t where exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') and  
 		m.trigger_state != 'COMPLETE' and m.trigger_state != 'PAUSED' )
 	</sql-query>
@@ -105,9 +105,9 @@
 		<return-scalar column="impljob" type="string"/>
 		<return-scalar column="trigger_type" type="string"/>
 		<return-scalar column="instance_status" type="string"/>
-		<return-scalar column="ordernum" type="int"/>
+		<return-scalar column="version" type="int"/>
 		select t.id,t.job_name,t.job_group,t.description,t.job_class_name,t.job_bean_name,t.job_method_name,t.cron_expression,t.exectime,
-		t.impljob,t.trigger_type,t.instance_status,t.ordernum 
+		t.impljob,t.trigger_type,t.instance_status,t.version 
 		from jm_job_detail t where exists ( select 1 from qrtz_triggers m where m.job_name=concat(t.job_name, '-J') and m.job_group=concat(t.job_group,'-J') and  
 		m.trigger_state = 'PAUSED' )
 	</sql-query>

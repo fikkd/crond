@@ -70,7 +70,7 @@ $(function(){
 		cronExpression = data.cron_expression;
 		cronExpressionZhCN = data.cron_zh_cn;
 		if (!cronExpression) {//新建任务时默认表达式
-			oMainApi.cronExpression = "* * * * * ? *";
+			oMainApi.cronExpression = "0 0 * * * ? *";
 		} else {
 			oMainApi.cronExpression = cronExpression;	
 			oMainApi.cronExpressionZhCN = cronExpressionZhCN;	

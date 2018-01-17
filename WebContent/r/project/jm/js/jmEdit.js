@@ -58,6 +58,10 @@ $(function() {
 	}
 	/** 构造与验证表单数据 */
 	function setFormData(job) {
+		if (!job.version) {
+			delete job.version;
+		}
+		
 		var isBean = $("input[data-val='ctype']:checked").val();
 		// 新增时普通方式或标准方式的验证
 		if (isNew=='true' && isBean=='general') {//【1-是 0-否】
@@ -145,6 +149,17 @@ $(function() {
         });
 	}
 
+	function fShowDate(e) {
+		WdatePicker({			
+			dateFmt:'yyyy-MM-dd HH:mm:ss',
+			minDate:'%y-%M-%d'			
+		}, false, e);
+	};
+
+	function fDelDate() {
+		$(this).prev().html('');		
+	}
+	
 	/** 改变普通方式启用状态 */
 	function changeCType() {
 		var isBean = $('input[data-val="ctype"][value="general"]').prop('checked');
@@ -199,16 +214,7 @@ $(function() {
 		$('[name="cron_zh_cn"]').attr("title",cron_zh_cn=arr[1]);		
 	}
 	
-	var fShowDate = function(e) {
-		WdatePicker({			
-			dateFmt:'yyyy-MM-dd HH:mm:ss',
-			minDate:'%y-%M-%d'			
-		}, false, e);
-	};
 
-	var fDelDate = function(e) {
-		$(this).prev().html('');		
-	}
 	
 	
 	/** ============================================================= **/
@@ -227,9 +233,9 @@ $(function() {
 	}
 	$('input[data-val="ctype"]').change(changeCType);
 	changeCType();
-	// 倒计时间
+/*	// 倒计时间
 	$('#countDown').change(changeCountDown);
-	changeCountDown();
+	changeCountDown();*/
 		
 	// 调度类型
 	if (trigger_type=='0') {
